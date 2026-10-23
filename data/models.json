@@ -1,0 +1,123 @@
+[
+  {
+    "id": "wan22-i2v",
+    "name": "Wan 2.2 I2V",
+    "vendor": "Alibaba",
+    "open": true,
+    "creditsPerSecond": 0.8,
+    "maxDurationS": 5,
+    "kind": "video",
+    "modes": ["cinematic", "reshoot", "genjutsu", "edit", "ads"],
+    "note": "Open weights. Image to video, strong camera adherence."
+  },
+  {
+    "id": "wan22-t2v",
+    "name": "Wan 2.2 T2V",
+    "vendor": "Alibaba",
+    "open": true,
+    "creditsPerSecond": 0.6,
+    "maxDurationS": 5,
+    "kind": "video",
+    "modes": ["cinematic", "ads"],
+    "note": "Open weights. Text to video, cheapest per second."
+  },
+  {
+    "id": "ltx-2",
+    "name": "LTX-2",
+    "vendor": "Lightricks",
+    "open": true,
+    "creditsPerSecond": 1.2,
+    "maxDurationS": 10,
+    "kind": "video",
+    "modes": ["cinematic", "genjutsu", "edit"],
+    "note": "Open weights. Longest clips in the registry."
+  },
+  {
+    "id": "hunyuan-15",
+    "name": "HunyuanVideo 1.5",
+    "vendor": "Tencent",
+    "open": true,
+    "creditsPerSecond": 1.0,
+    "maxDurationS": 8,
+    "kind": "video",
+    "modes": ["cinematic", "genjutsu", "edit"],
+    "note": "Open weights. Best at faces and small motion."
+  },
+  {
+    "id": "flux-2-dev",
+    "name": "FLUX.2 dev",
+    "vendor": "Black Forest Labs",
+    "open": true,
+    "creditsPerSecond": 0.3,
+    "maxDurationS": 1,
+    "kind": "image",
+    "modes": ["reshoot", "soul", "ads", "fashion"],
+    "note": "Open weights. Stills, used as the re-shoot depth source, for Soul images and product stills."
+  },
+  {
+    "id": "qwen-image",
+    "name": "Qwen-Image",
+    "vendor": "Alibaba",
+    "open": true,
+    "creditsPerSecond": 0.25,
+    "maxDurationS": 1,
+    "kind": "image",
+    "modes": ["reshoot", "soul", "ads", "fashion"],
+    "note": "Open weights. Cheapest still model."
+  },
+  {
+    "id": "kokoro-tts",
+    "name": "Kokoro TTS",
+    "vendor": "hexgrad",
+    "open": true,
+    "creditsPerSecond": 0.02,
+    "maxDurationS": 30,
+    "kind": "audio",
+    "modes": ["audio"],
+    "note": "Open weights (Apache 2.0). Text to speech, 54 voices."
+  },
+  {
+    "id": "chatterbox",
+    "name": "Chatterbox",
+    "vendor": "Resemble AI",
+    "open": true,
+    "creditsPerSecond": 0.04,
+    "maxDurationS": 30,
+    "kind": "audio",
+    "modes": ["audio"],
+    "note": "Open weights (MIT). Voice clone, voice swap and multi-language dubbing."
+  },
+  {
+    "id": "audiogen-medium",
+    "name": "AudioGen Medium",
+    "vendor": "Meta",
+    "open": true,
+    "creditsPerSecond": 0.05,
+    "maxDurationS": 10,
+    "kind": "audio",
+    "modes": ["audio"],
+    "note": "Open weights (CC-BY-NC). Sound effects and ambience."
+  },
+  {
+    "id": "realesrgan-x4",
+    "name": "Real-ESRGAN x4",
+    "vendor": "XPixel",
+    "open": true,
+    "creditsPerSecond": 0.05,
+    "maxDurationS": 60,
+    "kind": "video",
+    "modes": ["upscale"],
+    "note": "Open weights (BSD-3). 4x upscale and deflicker."
+  },
+  {
+    "id": "rife-v4",
+    "name": "RIFE 4",
+    "vendor": "Practical-RIFE",
+    "open": true,
+    "creditsPerSecond": 0.03,
+    "maxDurationS": 60,
+    "kind": "video",
+    "modes": ["upscale"],
+    "note": "Open weights (MIT). Frame interpolation to 60 fps."
+  }
+]

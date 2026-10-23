@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "still-to-motion",
+      "name": "Still to motion",
+      "description": "A Soul key frame, then a Wan camera move that continues it.",
+      "nodes": [
+        {
+          "id": "frame",
+          "title": "Key frame",
+          "mode": "soul",
+          "modelId": "flux-2-dev",
+          "prompt": "A lone figure under a streetlamp, warm sodium light, wet asphalt, cinematic still.",
+          "durationS": 1,
+          "x": 24,
+          "y": 48,
+          "inputId": null
+        },
+        {
+          "id": "move",
+          "title": "Camera move",
+          "mode": "cinematic",
+          "modelId": "wan22-i2v",
+          "prompt": "Slow dolly in from the street to the figure, holding the sodium glow.",
+          "durationS": 5,
+          "x": 400,
+          "y": 48,
+          "inputId": "frame"
+        }
+      ]
+    },
+    {
+      "id": "reshoot-then-move",
+      "name": "Re-shoot then move",
+      "description": "Change the angle on a still, then give the new angle a camera move.",
+      "nodes": [
+        {
+          "id": "angle",
+          "title": "New angle",
+          "mode": "reshoot",
+          "modelId": "flux-2-dev",
+          "prompt": "Orbit twenty degrees to the right and lower the camera to chest height.",
+          "durationS": 1,
+          "x": 24,
+          "y": 48,
+          "inputId": null
+        },
+        {
+          "id": "move",
+          "title": "Move the angle",
+          "mode": "cinematic",
+          "modelId": "wan22-i2v",
+          "prompt": "Push slowly toward the subject from the new angle, keeping the room still.",
+          "durationS": 4,
+          "x": 400,
+          "y": 48,
+          "inputId": "angle"
+        }
+      ]
+    },
+    {
+      "id": "edit-grade-score",
+      "name": "Edit, grade and score",
+      "description": "One edit branches into an upscale while a separate audio bed runs beside it.",
+      "nodes": [
+        {
+          "id": "edit",
+          "title": "Edit the cut",
+          "mode": "edit",
+          "modelId": "wan22-i2v",
+          "prompt": "Replace the grey sky with a storm and keep the actor's timing.",
+          "durationS": 4,
+          "x": 24,
+          "y": 48,
+          "inputId": null
+        },
+        {
+          "id": "grade",
+          "title": "Upscale the cut",
+          "mode": "upscale",
+          "modelId": "realesrgan-x4",
+          "prompt": "4x upscale with deflicker, keeping grain.",
+          "durationS": 4,
+          "x": 400,
+          "y": 48,
+          "inputId": "edit"
+        },
+        {
+          "id": "score",
+          "title": "Score the cut",
+          "mode": "audio",
+          "modelId": "kokoro-tts",
+          "prompt": "A low string bed that rises under the last line.",
+          "durationS": 8,
+          "x": 24,
+          "y": 330,
+          "inputId": null
+        }
+      ]
+    },
+    {
+      "id": "product-launch",
+      "name": "Product launch",
+      "description": "A product still and a poster pass, then a four-second launch beat.",
+      "nodes": [
+        {
+          "id": "product",
+          "title": "Product still",
+          "mode": "ads",
+          "modelId": "flux-2-dev",
+          "prompt": "A red kettle on a warm kitchen counter, steam catching the window light.",
+          "durationS": 1,
+          "x": 24,
+          "y": 48,
+          "inputId": null
+        },
+        {
+          "id": "poster",
+          "title": "Poster crop",
+          "mode": "ads",
+          "modelId": "flux-2-dev",
+          "prompt": "The same kettle as a vertical marketplace poster with room for a price.",
+          "durationS": 1,
+          "x": 400,
+          "y": 48,
+          "inputId": "product"
+        },
+        {
+          "id": "beat",
+          "title": "Launch beat",
+          "mode": "cinematic",
+          "modelId": "wan22-t2v",
+          "prompt": "Four-second product beat: the kettle steams, then the light drops to the logo.",
+          "durationS": 4,
+          "x": 776,
+          "y": 48,
+          "inputId": "poster"
+        }
+      ]
+    }
+  ]
+}

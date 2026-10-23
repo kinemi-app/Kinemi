@@ -1,0 +1,395 @@
+/* Primitives. Every colour here is a token from app/globals.css. */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--r-2);
+  font-size: var(--fs-body);
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  white-space: nowrap;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.primary {
+  background: var(--action);
+  color: var(--action-ink);
+  box-shadow: var(--shadow-1);
+}
+
+.primary:not(:disabled):hover {
+  background: var(--action-hover);
+}
+
+.primary:not(:disabled):active {
+  background: var(--action-press);
+}
+
+.ghost {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--text-0);
+}
+
+.ghost:not(:disabled):hover {
+  background: var(--surface-3);
+  border-color: var(--line-strong);
+}
+
+.quiet {
+  background: transparent;
+  color: var(--text-1);
+}
+
+.quiet:not(:disabled):hover {
+  background: var(--surface-2);
+  color: var(--text-0);
+}
+
+.wide {
+  width: 100%;
+}
+
+.spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--r-full);
+  animation: spin 700ms linear infinite;
+  opacity: 0.9;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease);
+}
+
+button.chip:hover {
+  border-color: var(--line-strong);
+  color: var(--text-0);
+}
+
+.chipOn {
+  background: var(--action-veil);
+  border-color: var(--action);
+  color: var(--text-0);
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+}
+
+.segmentBtn {
+  height: 30px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--r-1);
+  background: transparent;
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+
+.segmentBtn:hover {
+  color: var(--text-0);
+}
+
+.segmentOn {
+  background: var(--action);
+  color: var(--action-ink);
+}
+
+.segmentOn:hover {
+  color: var(--action-ink);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.fieldHint {
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.input {
+  width: 100%;
+  height: 38px;
+  padding: 0 var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-0);
+  font-family: inherit;
+  font-size: var(--fs-body);
+  transition: border-color var(--dur-1) var(--ease);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-0);
+  font-family: inherit;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  transition: border-color var(--dur-1) var(--ease);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-2);
+}
+
+.input:hover,
+.textarea:hover {
+  border-color: var(--line-strong);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--action);
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sliderHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sliderValue {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--text-0);
+}
+
+.range {
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--action);
+  cursor: pointer;
+}
+
+.panel {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3);
+  overflow: hidden;
+}
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.panelHeadMain {
+  min-width: 0;
+}
+
+.panelTitle {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  letter-spacing: var(--tracking-h);
+  color: var(--text-0);
+}
+
+.panelSub {
+  margin-top: 2px;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.panelRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.panelBody {
+  padding: var(--space-5);
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.progressHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--text-1);
+}
+
+.progressTrack {
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--action);
+  border-radius: var(--r-full);
+  transition: width var(--dur-2) var(--ease);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-3);
+  background: var(--surface-1);
+}
+
+.emptyTitle {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+.emptyBody {
+  font-size: var(--fs-small);
+  color: var(--text-1);
+  max-width: 46ch;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 148px;
+  padding: var(--space-5);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-2);
+  background: var(--surface-2);
+  color: var(--text-1);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+}
+
+.dropzone:hover,
+.dropzone:focus-within,
+.dropzoneOver {
+  border-color: var(--action);
+  background: var(--action-veil);
+  color: var(--text-0);
+}
+
+.dropLabel {
+  font-size: var(--fs-body);
+  font-weight: 550;
+}
+
+.dropHint {
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.dropFile {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--state-ok);
+}
+
+.dropPreview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: var(--r-1);
+}
+
+.dropInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

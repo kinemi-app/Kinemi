@@ -1,0 +1,410 @@
+/* Canvas only: the board, node cards, template and collaboration panels.
+   Colours come from app/globals.css tokens. */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.fieldLabel {
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.select,
+.input,
+.titleInput,
+.number,
+.prompt,
+.shareLink {
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-2);
+  background: var(--surface-0);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-0);
+  font: inherit;
+  font-size: var(--fs-small);
+}
+
+.select:disabled,
+.input:disabled,
+.titleInput:disabled,
+.number:disabled,
+.prompt:disabled {
+  color: var(--text-2);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.prompt {
+  min-height: 62px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.number {
+  width: 84px;
+}
+
+.hint {
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  line-height: 1.4;
+}
+
+.note {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+}
+
+.noteError {
+  color: var(--state-bad);
+}
+
+.fileField {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-1);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  cursor: pointer;
+}
+
+.fileField:hover {
+  border-color: var(--action);
+  color: var(--text-0);
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.shareLink {
+  flex: 1;
+  min-width: 180px;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+}
+
+.peers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.peer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+}
+
+.peerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+}
+
+.peerDot0 {
+  background: var(--state-ok);
+}
+
+.peerDot1 {
+  background: var(--money);
+}
+
+.peerDot2 {
+  background: var(--action-text);
+}
+
+.peerDot3 {
+  background: var(--text-2);
+}
+
+.peerMeta {
+  margin-left: auto;
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.boardViewport {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.boardBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 320px;
+}
+
+.boardTitle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 200px;
+}
+
+.boardCount {
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+}
+
+.boardCanvas {
+  position: relative;
+  flex: none;
+  overflow: visible;
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 32px 32px,
+    var(--surface-0);
+}
+
+.edges {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+
+.arrowHead {
+  fill: var(--line-strong);
+}
+
+.emptyBoard {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 304px;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  box-shadow: var(--shadow-1);
+}
+
+.nodeSelected {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-2);
+}
+
+.nodeHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--r-2) var(--r-2) 0 0;
+}
+
+.drag {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--text-2);
+  cursor: grab;
+  line-height: 1;
+}
+
+.drag:active {
+  cursor: grabbing;
+}
+
+.drag:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.nodeTitle {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-1);
+  color: var(--text-0);
+  font: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.nodeTitle:hover,
+.nodeTitle:focus {
+  background: var(--surface-0);
+  border-color: var(--line);
+}
+
+.status {
+  padding: 2px var(--space-2);
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.statusRunning {
+  background: var(--money-veil);
+  color: var(--money);
+}
+
+.statusSucceeded {
+  background: var(--state-ok-veil);
+  color: var(--state-ok);
+}
+
+.statusFailed {
+  background: var(--action-veil);
+  color: var(--state-bad);
+}
+
+.nodeBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.nodeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-2);
+}
+
+.nodeActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nodeButton {
+  padding: 5px var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-1);
+  font: inherit;
+  font-size: var(--fs-micro);
+  cursor: pointer;
+}
+
+.nodeButton:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text-0);
+}
+
+.nodeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.lockName {
+  color: var(--money);
+  font-size: var(--fs-micro);
+}
+
+.result {
+  width: 100%;
+  height: auto;
+  margin-top: var(--space-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--surface-2);
+}
+
+.resultAudio {
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .nodeRow {
+    grid-template-columns: 1fr;
+  }
+}

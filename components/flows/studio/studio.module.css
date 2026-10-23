@@ -1,0 +1,179 @@
+/* Supercomputer layout: planner and CLI left, batch and schedule right.
+   Colours come from app/globals.css tokens only. */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.batchControls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.concurrency {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.controlLabel {
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.summary {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+}
+
+.note code {
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+}
+
+.code {
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--surface-0);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+}
+
+.shotHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shotIndex {
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+}
+
+.shotTitle {
+  color: var(--text-0);
+  font-weight: 600;
+}
+
+.shotMeta {
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 2px var(--space-2);
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.statusRunning {
+  background: var(--money-veil);
+  color: var(--money);
+}
+
+.statusSucceeded {
+  background: var(--state-ok-veil);
+  color: var(--state-ok);
+}
+
+.statusFailed {
+  background: var(--action-veil);
+  color: var(--state-bad);
+}
+
+.prompt {
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+.resultLink {
+  align-self: flex-start;
+  color: var(--action-text);
+  font-size: var(--fs-small);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .status {
+    margin-left: 0;
+  }
+}

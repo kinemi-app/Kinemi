@@ -1,0 +1,31 @@
+{
+  "bodies": [
+    { "id": "ff", "name": "Full frame", "hint": "36 x 24 mm" },
+    { "id": "s35", "name": "Super 35", "hint": "24.9 x 18.7 mm" },
+    { "id": "mf", "name": "Medium format", "hint": "53.4 x 40 mm" },
+    { "id": "mft", "name": "Micro four thirds", "hint": "17.3 x 13 mm" }
+  ],
+  "lenses": [
+    { "id": "18", "name": "18 mm", "hint": "wide, deep space" },
+    { "id": "24", "name": "24 mm", "hint": "wide" },
+    { "id": "35", "name": "35 mm", "hint": "reportage" },
+    { "id": "50", "name": "50 mm", "hint": "normal" },
+    { "id": "85", "name": "85 mm", "hint": "portrait" },
+    { "id": "135", "name": "135 mm", "hint": "compressed" }
+  ],
+  "apertures": ["f/1.4", "f/2", "f/2.8", "f/4", "f/5.6", "f/8", "f/11"],
+  "palettes": [
+    { "id": "neutral", "name": "Neutral", "hint": "no grade" },
+    { "id": "bleach", "name": "Bleach bypass", "hint": "crushed, desaturated" },
+    { "id": "teal-orange", "name": "Teal and orange", "hint": "blockbuster" },
+    { "id": "mono", "name": "Monochrome", "hint": "black and white" },
+    { "id": "daylight", "name": "Daylight film", "hint": "warm highlights" }
+  ],
+  "lighting": [
+    { "id": "golden", "name": "Golden hour" },
+    { "id": "overcast", "name": "Overcast" },
+    { "id": "neon", "name": "Neon night" },
+    { "id": "tungsten", "name": "Tungsten interior" },
+    { "id": "practical", "name": "Practical lights" }
+  ]
+}

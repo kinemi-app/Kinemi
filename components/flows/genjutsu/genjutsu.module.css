@@ -1,0 +1,89 @@
+/* Genjutsu only: source length, the character card and the eight-emotion wheel.
+   Colours come from app/globals.css tokens. */
+
+.stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.inputGroup { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.nameInput {
+  width: 100%;
+  height: 38px;
+  padding: 0 var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  color: var(--text-0);
+  font: inherit;
+  font-size: var(--fs-body);
+  transition: border-color var(--dur-1) var(--ease);
+}
+.nameInput:hover { border-color: var(--line-strong); }
+.nameInput:focus { outline: none; border-color: var(--action); }
+
+.clipMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+.clipLength { color: var(--text-0); font-family: var(--font-mono); }
+
+.probe { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+
+.identityStatus {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+
+.wheelArea { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.wheel { position: relative; width: 100%; max-width: 240px; aspect-ratio: 1; }
+
+.emotion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  height: 30px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease);
+}
+.emotion:hover { border-color: var(--line-strong); color: var(--text-0); }
+.emotionOn { background: var(--action-veil); border-color: var(--action); color: var(--text-0); }
+
+/* Clockwise from the top: eight slots around a 240px circle. */
+.wheel button:nth-of-type(1) { top: 8%; left: 50%; }
+.wheel button:nth-of-type(2) { top: 24%; left: 76%; }
+.wheel button:nth-of-type(3) { top: 50%; left: 86%; }
+.wheel button:nth-of-type(4) { top: 76%; left: 76%; }
+.wheel button:nth-of-type(5) { top: 92%; left: 50%; }
+.wheel button:nth-of-type(6) { top: 76%; left: 24%; }
+.wheel button:nth-of-type(7) { top: 50%; left: 14%; }
+.wheel button:nth-of-type(8) { top: 24%; left: 24%; }
+
+.wheelCount {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92px;
+  transform: translate(-50%, -50%);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.4;
+  text-align: center;
+}
+.wheelHint { color: var(--text-2); font-size: var(--fs-small); text-align: center; }
+.operations { display: flex; flex-wrap: wrap; gap: var(--space-2); }

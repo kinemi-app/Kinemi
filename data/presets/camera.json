@@ -1,0 +1,362 @@
+[
+  {
+    "id": "push-in",
+    "name": "Push in",
+    "family": "push",
+    "prompt": "slow push in toward the subject, steady, camera height constant"
+  },
+  {
+    "id": "pull-out",
+    "name": "Pull out",
+    "family": "pull",
+    "prompt": "slow pull back from the subject, revealing the room, steady"
+  },
+  {
+    "id": "orbit-left",
+    "name": "Orbit left",
+    "family": "orbit",
+    "prompt": "orbit to the left around the subject, constant distance, smooth arc"
+  },
+  {
+    "id": "orbit-right",
+    "name": "Orbit right",
+    "family": "orbit",
+    "prompt": "orbit to the right around the subject, constant distance, smooth arc"
+  },
+  {
+    "id": "dolly-zoom",
+    "name": "Dolly zoom",
+    "family": "push",
+    "prompt": "dolly in while zooming out, background compresses, vertigo effect"
+  },
+  {
+    "id": "crane-up",
+    "name": "Crane up",
+    "family": "crane",
+    "prompt": "crane rises from eye level to a high wide, smooth vertical move"
+  },
+  {
+    "id": "tilt-up",
+    "name": "Tilt up",
+    "family": "tilt",
+    "prompt": "tilt upward from the feet to the face, fixed position"
+  },
+  {
+    "id": "handheld-follow",
+    "name": "Handheld follow",
+    "family": "handheld",
+    "prompt": "handheld follow behind the subject, light shake, documentary feel"
+  },
+  {
+    "id": "push-in-macro",
+    "name": "Macro push",
+    "family": "push",
+    "prompt": "slow macro push toward a detail, shallow focus, breath held"
+  },
+  {
+    "id": "push-in-crash",
+    "name": "Crash push",
+    "family": "push",
+    "prompt": "fast push into the subject's eyes, ending tight, no settle"
+  },
+  {
+    "id": "push-in-arc",
+    "name": "Arcing push",
+    "family": "push",
+    "prompt": "gentle push in on a slight arc, keeping the subject centred"
+  },
+  {
+    "id": "snap-push",
+    "name": "Snap push",
+    "family": "push",
+    "prompt": "snap push forward on the line, hard stop, held frame"
+  },
+  {
+    "id": "creep-in",
+    "name": "Creep in",
+    "family": "push",
+    "prompt": "imperceptible creep forward across the room, patient, almost still"
+  },
+  {
+    "id": "push-through-door",
+    "name": "Doorway push",
+    "family": "push",
+    "prompt": "push forward through a doorway into the next room, continuous"
+  },
+  {
+    "id": "push-in-low",
+    "name": "Low push",
+    "family": "push",
+    "prompt": "low-angle push in from floor level, subject looming above"
+  },
+  {
+    "id": "push-in-overhead",
+    "name": "Overhead push",
+    "family": "push",
+    "prompt": "overhead push straight down toward the table, centred, steady"
+  },
+  {
+    "id": "pull-out-reveal",
+    "name": "Reveal pull",
+    "family": "pull",
+    "prompt": "slow pull back to reveal the crew and lights behind the frame"
+  },
+  {
+    "id": "pull-out-high",
+    "name": "High pull",
+    "family": "pull",
+    "prompt": "pull up and back to a high wide, room falling away"
+  },
+  {
+    "id": "pull-out-corridor",
+    "name": "Corridor pull",
+    "family": "pull",
+    "prompt": "pull backward down a corridor, subject shrinking in frame"
+  },
+  {
+    "id": "pull-out-window",
+    "name": "Window pull",
+    "family": "pull",
+    "prompt": "pull back through a window, foreground frame sliding past"
+  },
+  {
+    "id": "whip-pull",
+    "name": "Whip pull",
+    "family": "pull",
+    "prompt": "fast whip pull back, motion blur, then settle on the wide"
+  },
+  {
+    "id": "pull-out-low",
+    "name": "Low pull",
+    "family": "pull",
+    "prompt": "low pull back along the floor, foreground rushing past lens"
+  },
+  {
+    "id": "retreat",
+    "name": "Retreat",
+    "family": "pull",
+    "prompt": "steady retreat from a seated subject, chair and room entering frame"
+  },
+  {
+    "id": "pull-out-crowd",
+    "name": "Crowd pull",
+    "family": "pull",
+    "prompt": "pull back through a crowd, heads entering frame one by one"
+  },
+  {
+    "id": "reveal-left",
+    "name": "Left reveal",
+    "family": "pull",
+    "prompt": "pull out and drift left, revealing the set wall and lights"
+  },
+  {
+    "id": "orbit-180",
+    "name": "Half orbit",
+    "family": "orbit",
+    "prompt": "half orbit around the subject, ending on the opposite side"
+  },
+  {
+    "id": "orbit-360",
+    "name": "Full orbit",
+    "family": "orbit",
+    "prompt": "full clean orbit around the subject, constant speed and distance"
+  },
+  {
+    "id": "orbit-low",
+    "name": "Low orbit",
+    "family": "orbit",
+    "prompt": "low orbit around the feet, looking up, floor close"
+  },
+  {
+    "id": "orbit-high",
+    "name": "High orbit",
+    "family": "orbit",
+    "prompt": "high orbit looking down, subject pinned to the centre"
+  },
+  {
+    "id": "orbit-hood",
+    "name": "Over-shoulder orbit",
+    "family": "orbit",
+    "prompt": "orbit behind the subject, hood and shoulders filling frame"
+  },
+  {
+    "id": "orbit-reverse",
+    "name": "Reverse orbit",
+    "family": "orbit",
+    "prompt": "orbit counter to the subject's turn, creating a tense standoff"
+  },
+  {
+    "id": "orbit-slow",
+    "name": "Slow orbit",
+    "family": "orbit",
+    "prompt": "slow orbit with the subject held dead centre, architectural background"
+  },
+  {
+    "id": "orbit-quarter",
+    "name": "Quarter orbit",
+    "family": "orbit",
+    "prompt": "quarter orbit to the three-quarter angle, stopping on the eyeline"
+  },
+  {
+    "id": "orbit-track",
+    "name": "Tracking orbit",
+    "family": "orbit",
+    "prompt": "orbit while tracking the subject's walk, distance locked"
+  },
+  {
+    "id": "orbit-rise",
+    "name": "Rising orbit",
+    "family": "orbit",
+    "prompt": "orbit and rise together, ending high on the far side"
+  },
+  {
+    "id": "orbit-push",
+    "name": "Orbit push",
+    "family": "orbit",
+    "prompt": "orbit and push in simultaneously, ending tight on the far cheek"
+  },
+  {
+    "id": "crane-down",
+    "name": "Crane down",
+    "family": "crane",
+    "prompt": "crane descends from high wide to eye level, smooth and controlled"
+  },
+  {
+    "id": "crane-reveal",
+    "name": "Crane reveal",
+    "family": "crane",
+    "prompt": "crane up and over a wall, revealing the street beyond"
+  },
+  {
+    "id": "crane-sweep",
+    "name": "Crane sweep",
+    "family": "crane",
+    "prompt": "long crane sweep across the set, foreground passing beneath lens"
+  },
+  {
+    "id": "crane-follow",
+    "name": "Crane follow",
+    "family": "crane",
+    "prompt": "crane follows the subject's walk, rising slightly with each step"
+  },
+  {
+    "id": "crane-drop",
+    "name": "Crane drop",
+    "family": "crane",
+    "prompt": "fast crane drop toward the subject, decelerating into a close-up"
+  },
+  {
+    "id": "crane-orbit",
+    "name": "Crane orbit",
+    "family": "crane",
+    "prompt": "crane arcs around and above the subject, ending overhead"
+  },
+  {
+    "id": "crane-side",
+    "name": "Crane side",
+    "family": "crane",
+    "prompt": "crane tracks sideways at height, parallel to the action"
+  },
+  {
+    "id": "crane-entry",
+    "name": "Crane entry",
+    "family": "crane",
+    "prompt": "crane lowers into the room through a high window, continuous move"
+  },
+  {
+    "id": "tilt-down",
+    "name": "Tilt down",
+    "family": "tilt",
+    "prompt": "tilt down from the sky to the subject's face, fixed base"
+  },
+  {
+    "id": "tilt-reveal",
+    "name": "Building tilt",
+    "family": "tilt",
+    "prompt": "tilt up a building face, ending on the rooftop sign"
+  },
+  {
+    "id": "tilt-scan",
+    "name": "Tilt scan",
+    "family": "tilt",
+    "prompt": "slow tilt down a full-length figure, stopping at the shoes"
+  },
+  {
+    "id": "tilt-whip",
+    "name": "Whip tilt",
+    "family": "tilt",
+    "prompt": "whip tilt up to the ceiling, then settle back down"
+  },
+  {
+    "id": "tilt-dutch",
+    "name": "Dutch tilt",
+    "family": "tilt",
+    "prompt": "tilt with a slight dutch angle, horizon cutting the frame"
+  },
+  {
+    "id": "tilt-push",
+    "name": "Tilt push",
+    "family": "tilt",
+    "prompt": "tilt up while pushing in, face growing in frame"
+  },
+  {
+    "id": "tilt-over",
+    "name": "Tilt over",
+    "family": "tilt",
+    "prompt": "tilt over the top of the subject's head, continuing to the floor"
+  },
+  {
+    "id": "tilt-horizon",
+    "name": "Level tilt",
+    "family": "tilt",
+    "prompt": "tilt to level the horizon, starting canted and ending square"
+  },
+  {
+    "id": "handheld-static",
+    "name": "Handheld hold",
+    "family": "handheld",
+    "prompt": "handheld hold on the subject, breathing camera, no reframing"
+  },
+  {
+    "id": "handheld-walk",
+    "name": "Handheld walk",
+    "family": "handheld",
+    "prompt": "handheld walk beside the subject, matching pace, light sway"
+  },
+  {
+    "id": "handheld-run",
+    "name": "Handheld run",
+    "family": "handheld",
+    "prompt": "handheld run behind the subject, heavy shake, urgent"
+  },
+  {
+    "id": "handheld-crowd",
+    "name": "Crowd handheld",
+    "family": "handheld",
+    "prompt": "handheld push through a crowd, camera jostled, faces passing"
+  },
+  {
+    "id": "handheld-doorway",
+    "name": "Doorway handheld",
+    "family": "handheld",
+    "prompt": "handheld from a doorway, slight drift, observation distance"
+  },
+  {
+    "id": "handheld-reveal",
+    "name": "Handheld reveal",
+    "family": "handheld",
+    "prompt": "handheld turn to reveal the room, loose framing, breathing lens"
+  },
+  {
+    "id": "handheld-close",
+    "name": "Handheld close",
+    "family": "handheld",
+    "prompt": "handheld close on the face, micro drift, raw and unsteady"
+  },
+  {
+    "id": "handheld-chase",
+    "name": "Handheld chase",
+    "family": "handheld",
+    "prompt": "handheld chase down a corridor, hard turns, camera lagging"
+  }
+]

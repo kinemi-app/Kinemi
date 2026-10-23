@@ -1,0 +1,74 @@
+[
+  {
+    "id": "hard-flash-editorial",
+    "name": "Hard flash editorial",
+    "hint": "Bare on-camera flash, glossy skin",
+    "prompt": "A hard flash editorial portrait against a seamless studio backdrop, one bare on-camera flash throwing a crisp shadow behind the subject, clothing and makeup keyed to the palette {palette}, 85mm lens, fine grain."
+  },
+  {
+    "id": "amber-screening-room",
+    "name": "Amber screening room",
+    "hint": "Warm tungsten, velvet seats",
+    "prompt": "A small screening room lit by a single amber tungsten lamp, worn velvet seats and a glowing projection screen, a figure seated in the third row, colour script {palette}, anamorphic flare, soft halation."
+  },
+  {
+    "id": "cold-daylight-street",
+    "name": "Cold daylight street",
+    "hint": "Overcast, wet concrete",
+    "prompt": "A cold overcast daylight street after rain, wet concrete and glass catching a flat grey sky, a lone figure walking past shuttered shopfronts, palette {palette}, 35mm documentary framing."
+  },
+  {
+    "id": "chrome-club-nocturne",
+    "name": "Chrome club nocturne",
+    "hint": "Laser haze, mirror tiles",
+    "prompt": "A chrome club interior at two in the morning with laser haze, mirror tiles and a packed dance floor, a performer caught mid-motion under a hard spotlight, palette {palette}, pushed film grain."
+  },
+  {
+    "id": "dust-bowl-western",
+    "name": "Dust-bowl western",
+    "hint": "Sun-bleached, long shadows",
+    "prompt": "A sun-bleached dust-bowl western town at golden hour, long shadows across a wooden boardwalk, a rider silhouetted against the haze, palette {palette}, widescreen framing, warm drifting dust."
+  },
+  {
+    "id": "pastel-motel",
+    "name": "Pastel motel",
+    "hint": "Pink stucco, noon sun",
+    "prompt": "A pastel motel courtyard at noon, pink stucco walls, a drained turquoise pool and a single figure in the shade, palette {palette}, medium format clarity, nostalgic travel photography."
+  },
+  {
+    "id": "wet-asphalt-neon",
+    "name": "Wet asphalt neon",
+    "hint": "Rain, sodium and magenta",
+    "prompt": "A rain-soaked city street at night, sodium streetlights and magenta neon smeared across wet asphalt, a figure under a clear umbrella, palette {palette}, long exposure, cinematic contrast."
+  },
+  {
+    "id": "sun-bleached-rooftop",
+    "name": "Sun-bleached rooftop",
+    "hint": "White linen, hard noon",
+    "prompt": "A sun-bleached rooftop in high summer, white linen moving in the wind, a figure leaning on a concrete parapet above the city, palette {palette}, hard noon light, editorial fashion framing."
+  },
+  {
+    "id": "green-room-portrait",
+    "name": "Green room portrait",
+    "hint": "Fluorescent, close crop",
+    "prompt": "A close portrait in a cramped green room, fluorescent tubes overhead, a cracked mirror and a costume rack behind the subject, palette {palette}, 50mm lens, unretouched skin."
+  },
+  {
+    "id": "black-and-white-rehearsal",
+    "name": "Black-and-white rehearsal",
+    "hint": "Grain, stage light",
+    "prompt": "A black-and-white rehearsal on an empty stage, a single overhead work light carving the dancer out of the dark, dust in the air, palette {palette}, high-contrast monochrome, 35mm grain."
+  },
+  {
+    "id": "salt-flat-fashion",
+    "name": "Salt-flat fashion",
+    "hint": "White horizon, blue hour",
+    "prompt": "A fashion figure crossing a white salt flat at blue hour, the horizon dissolving into a pale sky, a long coat lifting in the wind, palette {palette}, wide-angle editorial, subtle lens flare."
+  },
+  {
+    "id": "candlelit-interior",
+    "name": "Candlelit interior",
+    "hint": "Tallow, dark wood",
+    "prompt": "A candlelit interior with dark wood panelling, a table set for two and a figure at the window, every surface warmed by tallow light, palette {palette}, 40mm lens, painterly shadows."
+  }
+]

@@ -1,0 +1,94 @@
+/* Academy lessons on top of the shared flow page. Colours come from globals.css only. */
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 68ch);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.contents {
+  position: sticky;
+  top: calc(var(--space-8) + var(--space-2));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-right: var(--space-4);
+  border-right: 1px solid var(--line);
+}
+
+.contentsTitle {
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+
+.contentsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contentsLink {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  transition: color var(--dur-1) var(--ease);
+}
+
+.contentsLink:hover { color: var(--text-0); }
+
+.contentsNumber { flex: none; color: var(--text-2); font-family: var(--font-mono); font-size: var(--fs-micro); }
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  max-width: 68ch;
+}
+
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lessonTitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  scroll-margin-top: calc(var(--space-8) + var(--space-2));
+}
+
+.lessonNumber { flex: none; color: var(--text-2); font-family: var(--font-mono); font-size: var(--fs-small); font-weight: 400; }
+
+.lesson p { color: var(--text-1); line-height: 1.7; }
+
+.tryIt { margin-top: var(--space-2); }
+
+.tryItLink { color: var(--action-text); font-size: var(--fs-small); font-weight: 600; }
+
+.tryItLink:hover { color: var(--action-hover); }
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .contents {
+    position: static;
+    padding-right: 0;
+    padding-bottom: var(--space-4);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

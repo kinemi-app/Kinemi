@@ -1,0 +1,36 @@
+{
+  "name": "kinemi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kinemi - an open, ComfyUI-native film studio for camera moves, re-shoots and motion transfer.",
+  "bin": {
+    "kinemi": "bin/kinemi.mjs"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node scripts/start.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "pretest": "next build",
+    "test": "node --test --test-concurrency=1 tests/api.smoke.mjs tests/studios.smoke.mjs",
+    "test:guard": "node --test tests/start.guard.mjs",
+    "pretest:browser": "next build",
+    "test:browser": "node --test tests/home.browser.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "globals": "17.13.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.2"
+  }
+}
