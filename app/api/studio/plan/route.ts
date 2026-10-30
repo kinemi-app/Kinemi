@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { MAX_BRIEF, MIN_BRIEF, normalizeBrief, planCampaign } from "../../../../lib/studio/planner";
+import { MAX_BRIEF, MIN_BRIEF, normalizeBrief, planShots } from "../../../../lib/studio/planner";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -27,5 +27,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `"brief" must carry a subject` }, { status: 400 });
   }
 
-  return NextResponse.json({ shots: planCampaign(brief) });
+  return NextResponse.json(await planShots(brief));
 }

@@ -1,0 +1,316 @@
+---
+import Phone from './Phone.astro';
+import Shot from './Shot.astro';
+import PixelText from './PixelText.astro';
+import TokenRain from './TokenRain.astro';
+import { SITE } from '../data/site';
+---
+
+<section class="anywhere" id="start" aria-labelledby="anywhere-title">
+  <div class="container">
+    <div class="any-card" data-reveal>
+      <TokenRain class="any-rain" />
+
+      <div class="any-copy">
+        <h2 id="anywhere-title">
+          <span class="any-dim">Start in the browser,</span>
+          render wherever<br />you are
+        </h2>
+        <p>
+          Every tool runs in your browser. Connect a Comfy key or the ComfyUI on your own GPU, and render wherever your compute
+          lives.
+        </p>
+        <div class="any-actions">
+          <a class="pill" href={SITE.appUrl} data-magnetic>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"></path></svg>
+            Open the studio
+          </a>
+          <a class="pill" href={SITE.comfyUrl} data-magnetic>
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+              <path
+                d="M6 1.5v3M10 1.5v3M4 4.5h8v3a4 4 0 01-8 0zM8 11.5v3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+            Connect your Comfy
+          </a>
+        </div>
+      </div>
+
+      <div class="any-phones" aria-hidden="false">
+        <div class="any-phone any-phone-a">
+          <Phone>
+            <Shot name="phone-anywhere" fill sizes="(max-width: 760px) 50vw, 20vw" />
+          </Phone>
+        </div>
+        <div class="any-phone any-phone-b">
+          <Phone>
+            <div class="promo" role="img" aria-label="Kinemi: a new kind of film studio">
+              <TokenRain columns={9} class="promo-rain" />
+              <div class="promo-word">
+                <PixelText text="KINEMI" stops={['#ffffff', '#d6fbe6']} decorative />
+              </div>
+              <div class="promo-card">
+                <p>Get a whole shot from a single message.</p>
+                <span class="mono">Kinemi chat</span>
+              </div>
+              <div class="promo-foot">
+                <span class="promo-kicker">Real camera language</span>
+                <span class="promo-title">A new kind of film studio</span>
+              </div>
+            </div>
+          </Phone>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .anywhere {
+    padding: 0 0 clamp(80px, 9vw, 140px);
+  }
+
+  .any-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: clamp(560px, 46vw, 680px);
+    overflow: hidden;
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(60% 80% at 100% 100%, rgba(57, 216, 121, 0.5), transparent 70%),
+      radial-gradient(50% 60% at 0% 0%, rgba(13, 95, 134, 0.45), transparent 70%),
+      linear-gradient(160deg, #0b1b2b 0%, #0b2d35 45%, #0d4a37 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 231, 169, 0.2),
+      0 60px 140px -60px rgba(57, 216, 121, 0.45);
+    isolation: isolate;
+  }
+
+  .any-card :global(.any-rain) {
+    left: 45%;
+    z-index: -1;
+  }
+
+  .any-copy {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 22px;
+    padding: clamp(32px, 5vw, 72px);
+  }
+
+  .any-copy h2 {
+    font-size: clamp(36px, 4.6vw, 66px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+
+  .any-dim {
+    display: block;
+    margin-bottom: 0.08em;
+    font-size: 0.5em;
+    letter-spacing: -0.02em;
+    color: var(--green-200);
+  }
+
+  .any-copy p {
+    max-width: 40ch;
+    color: rgba(242, 247, 244, 0.72);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .any-actions {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .pill {
+    --mx: 0px;
+    --my: 0px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 22px 0 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink-1);
+    font-size: 15px;
+    font-weight: 500;
+    transform: translate3d(var(--mx), var(--my), 0);
+    transition:
+      transform 0.5s var(--ease-out),
+      box-shadow 0.4s;
+    box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.6);
+  }
+
+  .pill:hover {
+    box-shadow: 0 14px 40px -12px rgba(57, 216, 121, 0.7);
+  }
+
+  .pill svg {
+    transition: transform 0.5s var(--ease-spring);
+  }
+
+  .pill:hover svg {
+    transform: scale(1.2) rotate(-8deg);
+  }
+
+  /* ---------- phones ---------- */
+  .any-phones {
+    position: relative;
+    min-height: 100%;
+  }
+
+  .any-phone {
+    position: absolute;
+    width: clamp(180px, 19vw, 270px);
+  }
+
+  .any-phone-a {
+    left: 4%;
+    bottom: -16%;
+    rotate: -9deg;
+  }
+
+  .any-phone-b {
+    right: 6%;
+    top: 9%;
+    rotate: 8deg;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .any-phone {
+        animation: phones linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 60%;
+      }
+
+      .any-phone-b {
+        animation-name: phones-b;
+      }
+
+      @keyframes phones {
+        from {
+          transform: translateY(18%);
+        }
+        to {
+          transform: none;
+        }
+      }
+
+      @keyframes phones-b {
+        from {
+          transform: translateY(34%);
+        }
+        to {
+          transform: none;
+        }
+      }
+    }
+  }
+
+  /* ---------- promo screen inside the right phone ---------- */
+  .promo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    container-type: inline-size;
+    background:
+      radial-gradient(90% 60% at 50% 100%, rgba(57, 216, 121, 0.55), transparent 70%),
+      linear-gradient(180deg, #06111b 0%, #0b2a2c 55%, #0e5a3d 100%);
+  }
+
+  .promo :global(.promo-rain) {
+    opacity: 0.6;
+  }
+
+  .promo-word {
+    position: absolute;
+    top: 14cqw;
+    left: 8cqw;
+    width: 128cqw;
+  }
+
+  .promo-word :global(svg) {
+    width: 100%;
+  }
+
+  .promo-card {
+    position: absolute;
+    top: 46cqw;
+    left: 8cqw;
+    width: 70cqw;
+    padding: 5.5cqw 6cqw;
+    border-radius: 6cqw;
+    background: rgba(214, 251, 230, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .promo-card p {
+    font-size: 5.4cqw;
+    line-height: 1.3;
+  }
+
+  .promo-card span {
+    display: block;
+    margin-top: 4cqw;
+    font-size: 3.6cqw;
+    color: rgba(242, 247, 244, 0.6);
+  }
+
+  .promo-foot {
+    position: absolute;
+    left: 8cqw;
+    right: 8cqw;
+    bottom: 10cqw;
+    display: grid;
+    gap: 2cqw;
+  }
+
+  .promo-kicker {
+    font-size: 4.4cqw;
+    color: var(--green-300);
+  }
+
+  .promo-title {
+    font-size: 11cqw;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+  }
+
+  @media (max-width: 860px) {
+    .any-card {
+      grid-template-columns: 1fr;
+    }
+
+    .any-phones {
+      min-height: 520px;
+    }
+
+    .any-phone {
+      width: clamp(170px, 42vw, 240px);
+    }
+
+    .any-phone-a {
+      left: 8%;
+      bottom: -24%;
+    }
+
+    .any-phone-b {
+      top: 4%;
+      right: 8%;
+    }
+  }
+</style>

@@ -1,0 +1,132 @@
+---
+import Logo from './Logo.astro';
+import PixelText from './PixelText.astro';
+import { NAV, SITE } from '../data/site';
+import { POLICIES, policyUrl, operatorName, unfilled } from '../data/legal';
+import { CLOUD } from '../app/deploy';
+
+const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL ?? '/';
+const operator = unfilled().includes('operator') ? 'Kinemi' : operatorName();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#top" aria-label="Kinemi, back to top"><Logo /></a>
+        <p>Real camera language for every AI shot. Open models, clear prices, no lock-in.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        {NAV.slice(1).map((n) => <a href={n.href}>{n.label}</a>)}
+        <a href={SITE.academyUrl}>Academy</a>
+        {CLOUD && <a href={`${base}signin/`}>Sign in</a>}
+        <a href={SITE.appUrl}>Launch App</a>
+      </nav>
+    </div>
+  </div>
+  <div class="footer-word" data-pixel-field>
+    <PixelText text="KINEMI" mode="cells" decorative stops={['#145a37', '#0d3b25']} />
+  </div>
+  <div class="container footer-bottom">
+    <span>© {year} {operator}</span>
+    <nav class="footer-legal" aria-label="Legal" data-policies>
+      {POLICIES.map((p) => <a href={policyUrl(p.slug)}>{p.label}</a>)}
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(56px, 6vw, 88px);
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--ink-0), #041009);
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: 16px;
+    max-width: 340px;
+  }
+
+  .footer-brand p {
+    color: var(--fg-2);
+    font-size: 14px;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    font-size: 14px;
+  }
+
+  .footer-nav a {
+    color: var(--fg-2);
+    transition: color 0.3s;
+  }
+
+  .footer-nav a:hover {
+    color: #fff;
+  }
+
+  .footer-word {
+    margin: clamp(48px, 7vw, 96px) var(--gutter) 0;
+  }
+
+  .footer-word :global(svg) {
+    width: 100%;
+  }
+
+  .footer-word :global(.px) {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 0.55s var(--ease-out),
+      fill 0.4s;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    padding: 22px 0 28px;
+    color: var(--fg-3);
+    font-size: 13px;
+  }
+
+  .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .footer-legal a {
+    color: var(--fg-2);
+    transition: color 0.3s;
+  }
+
+  .footer-legal a:hover {
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { pixelField } from '../scripts/pixel-field';
+  import { showLocalPolicies } from '../data/legal';
+  showLocalPolicies();
+  const field = document.querySelector<HTMLElement>('[data-pixel-field]');
+  const svg = field?.querySelector('svg');
+  if (field && svg) pixelField(svg, field, 'glow');
+</script>

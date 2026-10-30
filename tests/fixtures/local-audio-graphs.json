@@ -1,0 +1,296 @@
+{
+  "voiceover": {
+    "nodes": {
+      "1": {
+        "class_type": "ChatterboxTTS",
+        "inputs": {
+          "text": "a door creaks open",
+          "seed": 7
+        }
+      },
+      "2": {
+        "class_type": "SaveAudio",
+        "inputs": {
+          "audio": [
+            "1",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-voiceover"
+        }
+      }
+    },
+    "output": "audio",
+    "width": 0,
+    "height": 0
+  },
+  "clone": {
+    "nodes": {
+      "1": {
+        "class_type": "LoadAudio",
+        "inputs": {
+          "audio": "kinemi-probe.wav"
+        }
+      },
+      "2": {
+        "class_type": "ChatterboxTTS",
+        "inputs": {
+          "text": "a door creaks open",
+          "audio_prompt": [
+            "1",
+            0
+          ],
+          "seed": 7
+        }
+      },
+      "3": {
+        "class_type": "SaveAudio",
+        "inputs": {
+          "audio": [
+            "2",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-clone"
+        }
+      }
+    },
+    "output": "audio",
+    "width": 0,
+    "height": 0
+  },
+  "swap": {
+    "nodes": {
+      "1": {
+        "class_type": "LoadVideo",
+        "inputs": {
+          "video": "kinemi-probe.mp4"
+        }
+      },
+      "2": {
+        "class_type": "GetVideoComponents",
+        "inputs": {
+          "video": [
+            "1",
+            0
+          ]
+        }
+      },
+      "3": {
+        "class_type": "LoadAudio",
+        "inputs": {
+          "audio": "kinemi-probe.wav"
+        }
+      },
+      "4": {
+        "class_type": "ChatterboxVC",
+        "inputs": {
+          "source_audio": [
+            "2",
+            1
+          ],
+          "target_voice": [
+            "3",
+            0
+          ],
+          "seed": 7
+        }
+      },
+      "5": {
+        "class_type": "CreateVideo",
+        "inputs": {
+          "images": [
+            "2",
+            0
+          ],
+          "audio": [
+            "4",
+            0
+          ],
+          "fps": [
+            "2",
+            2
+          ]
+        }
+      },
+      "6": {
+        "class_type": "SaveVideo",
+        "inputs": {
+          "video": [
+            "5",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-swap",
+          "format": "mp4",
+          "codec": "h264"
+        }
+      }
+    },
+    "output": "video",
+    "width": 1280,
+    "height": 720
+  },
+  "dub": {
+    "nodes": {
+      "1": {
+        "class_type": "LoadVideo",
+        "inputs": {
+          "video": "kinemi-probe.mp4"
+        }
+      },
+      "2": {
+        "class_type": "GetVideoComponents",
+        "inputs": {
+          "video": [
+            "1",
+            0
+          ]
+        }
+      },
+      "3": {
+        "class_type": "WhisperTranscribe",
+        "inputs": {
+          "audio": [
+            "2",
+            1
+          ]
+        }
+      },
+      "4": {
+        "class_type": "TranslateText",
+        "inputs": {
+          "text": [
+            "3",
+            0
+          ],
+          "target_language": "fr"
+        }
+      },
+      "5": {
+        "class_type": "ChatterboxTTS",
+        "inputs": {
+          "text": [
+            "4",
+            0
+          ],
+          "language": "fr",
+          "seed": 7
+        }
+      },
+      "6": {
+        "class_type": "CreateVideo",
+        "inputs": {
+          "images": [
+            "2",
+            0
+          ],
+          "audio": [
+            "5",
+            0
+          ],
+          "fps": [
+            "2",
+            2
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveVideo",
+        "inputs": {
+          "video": [
+            "6",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-dub",
+          "format": "mp4",
+          "codec": "h264"
+        }
+      }
+    },
+    "output": "video",
+    "width": 1280,
+    "height": 720
+  },
+  "scene": {
+    "nodes": {
+      "1": {
+        "class_type": "ChatterboxTTS",
+        "inputs": {
+          "text": "a door creaks open",
+          "seed": 1991636261
+        }
+      },
+      "2": {
+        "class_type": "SaveAudio",
+        "inputs": {
+          "audio": [
+            "1",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-scene"
+        }
+      }
+    },
+    "output": "audio",
+    "width": 0,
+    "height": 0
+  },
+  "sfx": {
+    "nodes": {
+      "1": {
+        "class_type": "LoadAudio",
+        "inputs": {
+          "audio": "kinemi-probe.wav"
+        }
+      },
+      "2": {
+        "class_type": "AudioMatch",
+        "inputs": {
+          "reference_audio": [
+            "1",
+            0
+          ],
+          "prompt": "a door creaks open",
+          "duration": 3,
+          "seed": 7
+        }
+      },
+      "3": {
+        "class_type": "SaveAudio",
+        "inputs": {
+          "audio": [
+            "2",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-sfx"
+        }
+      }
+    },
+    "output": "audio",
+    "width": 0,
+    "height": 0
+  },
+  "sfx-prompt-only": {
+    "nodes": {
+      "1": {
+        "class_type": "AudioGen",
+        "inputs": {
+          "prompt": "a door creaks open",
+          "duration": 3,
+          "seed": 7
+        }
+      },
+      "2": {
+        "class_type": "SaveAudio",
+        "inputs": {
+          "audio": [
+            "1",
+            0
+          ],
+          "filename_prefix": "kinemi/audio-sfx"
+        }
+      }
+    },
+    "output": "audio",
+    "width": 0,
+    "height": 0
+  }
+}

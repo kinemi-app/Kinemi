@@ -1,7 +1,7 @@
 /**
  * AC6: POST /api/generate answers 202 with a job id, polling GET /api/jobs/:id reaches
- * "succeeded" and carries a result URL. Also AC6 of T-0044: every flow page answers 200 with its
- * own <h1> on the production build. Runs against a real build on a spare port.
+ * "succeeded" and carries a result URL. Also: every studio tool page (web/dist, served by Next)
+ * answers 200 with its own <h1> on the production build. Runs against a real build on a spare port.
  */
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
@@ -162,23 +162,25 @@ test("a corrupt schedules file is reported and left alone", async () => {
 });
 
 const FLOW_PAGES = [
-  { path: "/cinematic", heading: "Cinematic" },
-  { path: "/storyboard", heading: "Storyboard" },
-  { path: "/reshoot", heading: "Re-shoot" },
-  { path: "/genjutsu", heading: "Genjutsu" },
-  { path: "/presets", heading: "Presets" },
-  { path: "/soul", heading: "Soul" },
-  { path: "/cast", heading: "AI Cast" },
-  { path: "/edit", heading: "Edit" },
-  { path: "/academy", heading: "Academy" },
-  { path: "/audio", heading: "Audio Studio" },
-  { path: "/ads", heading: "Marketing Studio" },
-  { path: "/fashion", heading: "Fashion Factory" },
-  { path: "/studio", heading: "Supercomputer" },
-  { path: "/upscale", heading: "Upscale" },
+  { path: "/app/tools/cinematic/", heading: "Cinematic" },
+  { path: "/app/tools/storyboard/", heading: "Storyboard" },
+  { path: "/app/tools/re-shoot/", heading: "Re-shoot" },
+  { path: "/app/tools/genjutsu/", heading: "Genjutsu" },
+  { path: "/app/tools/presets/", heading: "Presets" },
+  { path: "/app/tools/soul/", heading: "Soul" },
+  { path: "/app/tools/ai-cast/", heading: "AI Cast" },
+  { path: "/app/tools/edit/", heading: "Edit" },
+  { path: "/app/tools/academy/", heading: "Academy" },
+  { path: "/app/tools/audio-studio/", heading: "Audio Studio" },
+  { path: "/app/tools/marketing-studio/", heading: "Marketing Studio" },
+  { path: "/app/tools/fashion-factory/", heading: "Fashion Factory" },
+  { path: "/app/tools/supercomputer/", heading: "Supercomputer" },
+  { path: "/app/tools/upscale/", heading: "Upscale" },
+  { path: "/app/tools/canvas/", heading: "Canvas" },
+  { path: "/app/tools/3d-previz/", heading: "3D Previz" },
 ];
 
-test("the fourteen flow pages render their own heading on the production build", async () => {
+test("every studio tool page renders its own heading on the production build", async () => {
   for (const page of FLOW_PAGES) {
     const response = await fetch(`${BASE}${page.path}`);
     assert.equal(response.status, 200, `${page.path} should answer 200`);
@@ -191,12 +193,12 @@ test("the fourteen flow pages render their own heading on the production build",
     assert.ok(heading, `${page.path} should render an <h1> inside <main>`);
 
     const text = heading[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-    assert.equal(text, page.heading, `${page.path} should head its own flow`);
+    assert.equal(text, page.heading, `${page.path} should head its own page`);
   }
 });
 
 const NEW_MODES = [
-  { mode: "audio", modelId: "kokoro-tts", durationS: 1, kind: "audio" },
+  { mode: "audio", modelId: "chatterbox", durationS: 1, kind: "audio" },
   { mode: "ads", modelId: "wan22-i2v", durationS: 3, kind: "image" },
   { mode: "fashion", modelId: "flux-2-dev", durationS: 1, kind: "image" },
   { mode: "upscale", modelId: "realesrgan-x4", durationS: 3, kind: "image" },
@@ -260,10 +262,10 @@ test("audio answers 502 when the configured Comfy endpoint is unreachable", asyn
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         mode: "audio",
-        modelId: "kokoro-tts",
+        modelId: "chatterbox",
         prompt: "a test run for audio",
         durationS: 3,
-        params: { feature: "voiceover", voice: "warm", speed: 1 },
+        params: { feature: "voiceover" },
       }),
     });
     assert.equal(response.status, 502, "audio with an unreachable endpoint should answer 502");

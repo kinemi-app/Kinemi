@@ -1,0 +1,74 @@
+---
+// Columns of camera language falling slowly, like a monitor full of shot notes.
+// Pure CSS: each column is one composited layer moving on a loop.
+interface Props {
+  columns?: number;
+  class?: string;
+}
+const { columns = 22, class: className } = Astro.props;
+
+const TOKENS = [
+  'DOLLY IN', 'ORBIT 30°', 'TILT DOWN', '35MM', 'F/1.8', '#39D879', '24 FPS', 'CRANE UP', 'WHIP PAN',
+  'RACK FOCUS', 'ISO 800', '4K', '60 FPS', 'TRUCK LEFT', 'PUSH IN', 'DUTCH 12°', '85MM', 'T/2.1',
+  'ARC SHOT', 'HANDHELD', 'SLOW MO', '#2EE6C4', 'LOW ANGLE', 'DOLLY ZOOM', 'KEYLIGHT', 'CUT TO',
+];
+// deterministic pseudo-random, so the build output is stable
+let seed = 7;
+const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const cols = Array.from({ length: columns }, (_, i) => {
+  const words = Array.from({ length: 6 }, () => TOKENS[Math.floor(rand() * TOKENS.length)]);
+  return {
+    text: words.join(' · '),
+    left: (i / columns) * 100 + rand() * 2,
+    dur: 16 + rand() * 22,
+    delay: -rand() * 30,
+    opacity: 0.18 + rand() * 0.4,
+  };
+});
+---
+
+<div class:list={['rain', className]} aria-hidden="true">
+  {
+    cols.map((c) => (
+      <span class="rain-col" style={`left:${c.left.toFixed(2)}%;--dur:${c.dur.toFixed(1)}s;--delay:${c.delay.toFixed(1)}s;opacity:${c.opacity.toFixed(2)}`}>
+        {`${c.text} · ${c.text} · `}
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  .rain {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(180deg, transparent, #000 25%, #000 70%, transparent);
+  }
+
+  /* the text holds two identical halves, so sliding by half its height loops seamlessly */
+  .rain-col {
+    position: absolute;
+    top: 0;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    line-height: 1;
+    color: var(--green-300);
+    white-space: nowrap;
+    animation: fall var(--dur) linear infinite;
+    animation-delay: var(--delay);
+    will-change: transform;
+  }
+
+  @keyframes fall {
+    from {
+      transform: translateY(-50%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+</style>

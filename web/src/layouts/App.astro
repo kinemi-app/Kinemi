@@ -1,0 +1,52 @@
+---
+// The studio dashboard's page shell: same fonts and tokens as the landing page, its own stylesheet.
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import '../app/styles/app.css';
+import '../app/styles/sidebar.css';
+import '../app/styles/studio.css';
+import '../app/styles/rig.css';
+import { AUTH_STORAGE_KEY, BASE, CLOUD, GUESTS } from '../app/deploy';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+// the web version with sign-in required: without a session, go to Sign in before anything is drawn
+const wall = CLOUD && !GUESTS;
+---
+
+<!doctype html>
+<html lang="en" class="studio">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content="Kinemi studio: chat with the director’s assistant, run any of the 16 tools on their own, and keep every render in the asset store." />
+    <meta name="theme-color" content="#04090f" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline define:vars={{ wall, authKey: AUTH_STORAGE_KEY, signin: `${BASE}signin/` }}>
+      document.documentElement.classList.add('js');
+      try {
+        if (wall && !localStorage.getItem(authKey)) location.replace(signin + '?next=' + encodeURIComponent(location.pathname + location.search));
+        // apply this browser's sidebar and motion settings before the first paint, so nothing jumps
+        var s = JSON.parse(localStorage.getItem('kinemi.studio.v1') || 'null');
+        var d = JSON.parse(localStorage.getItem('kinemi.device.v1') || 'null') || (s && s.settings) || {};
+        if (d.sidebar === false) document.documentElement.classList.add('pre-no-sidebar');
+        if (d.motion === 'reduce') document.documentElement.classList.add('motion-reduce');
+        if (s) document.documentElement.classList.add('has-state');
+      } catch (e) {}
+      // never leave the page hidden if the app fails to start
+      setTimeout(function () {
+        document.documentElement.classList.add('app-ready');
+      }, 2500);
+    </script>
+    <Font cssVariable="--font-sans" preload />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

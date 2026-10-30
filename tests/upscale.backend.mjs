@@ -94,7 +94,7 @@ test("4x upscale sends an ESRGAN video graph with RIFE and deflicker", async () 
   assert.ok(classes(graph).includes("Deflicker"), "a non-zero deflicker should run the node");
   assert.ok(classes(graph).includes("CreateVideo"), "the graph should rebuild the clip");
   assert.ok(classes(graph).includes("SaveVideo"), "the graph should declare a video output");
-  assert.equal(nodeOf(graph, "LoadVideo")?.inputs.video, videoName);
+  assert.equal(nodeOf(graph, "LoadVideo")?.inputs.file, videoName);
   assert.equal(
     nodeOf(graph, "UpscaleModelLoader")?.inputs.model_name,
     "RealESRGAN_x4plus.pth",

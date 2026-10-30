@@ -1,0 +1,94 @@
+---
+// The policies: the list of them on the left, the text on the right. Markdown pages use this as their
+// layout; {{operator}}, {{email}} and the like in the text are filled in from src/data/legal.ts.
+import Page from './Page.astro';
+import { LEGAL, POLICIES, address, operatorName, policyUrl, unfilled, warnUnfilled } from '../data/legal';
+import { SITE } from '../data/site';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  /** set by Markdown pages */
+  frontmatter?: { title: string; slug: string; description?: string; kicker?: string };
+  headings?: Heading[];
+  /** set by .astro pages */
+  title?: string;
+  slug?: string;
+  description?: string;
+  kicker?: string;
+}
+
+const fm = Astro.props.frontmatter ?? Astro.props;
+const title = fm.title ?? 'Legal';
+const slug = fm.slug ?? '';
+const headings = (Astro.props.headings ?? []).filter((h) => h.depth === 2);
+
+const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const contact = LEGAL.email;
+const values: Record<string, string> = {
+  operator: operatorName(),
+  address: address(),
+  email: contact,
+  phone: LEGAL.phone,
+  abuseEmail: LEGAL.abuseEmail || contact,
+  authority: LEGAL.authority,
+  host: LEGAL.host,
+  emailProvider: LEGAL.emailProvider,
+  logDays: LEGAL.logDays,
+  dataRegion: LEGAL.dataRegion,
+  minimumAge: String(LEGAL.minimumAge),
+  updated: LEGAL.updated,
+  site: SITE.name,
+};
+// mailto links for the addresses, plain text for the rest
+const fill = (html: string) =>
+  html.replace(/\{\{(\w+)\}\}/g, (all, key: string) => {
+    const v = values[key];
+    if (v === undefined) return all;
+    if ((key === 'email' || key === 'abuseEmail') && !/^\[/.test(v)) return `<a href="mailto:${escape(v)}">${escape(v)}</a>`;
+    return escape(v);
+  });
+const body = fill(await Astro.slots.render('default'));
+const missing = unfilled();
+warnUnfilled();
+const updated = new Date(`${LEGAL.updated}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Page title={title} description={fm.description ?? `${title} for ${SITE.name}.`} current={slug}>
+  <div class="legal">
+    <nav class="legal-side" aria-label="Policies">
+      <h2>Policies</h2>
+      {
+        POLICIES.map((p) => (
+          <a href={policyUrl(p.slug)} aria-current={p.slug === slug ? 'page' : undefined}>
+            {p.title}
+          </a>
+        ))
+      }
+    </nav>
+    <article class="legal-doc">
+      <span class="legal-kicker">{fm.kicker ?? 'Legal'}</span>
+      <h1>{title}</h1>
+      <p class="legal-meta">Last updated {updated}</p>
+      {
+        import.meta.env.DEV && missing.length > 0 && (
+          <p class="legal-draft">Still to fill in, in src/data/legal.ts: {missing.join(', ')}. This note only shows while developing.</p>
+        )
+      }
+      {
+        headings.length > 2 && (
+          <nav class="legal-toc" aria-label="On this page">
+            <b>On this page</b>
+            {headings.map((h) => (
+              <a href={`#${h.slug}`}>{h.text}</a>
+            ))}
+          </nav>
+        )
+      }
+      <div class="prose" set:html={body} />
+    </article>
+  </div>
+</Page>

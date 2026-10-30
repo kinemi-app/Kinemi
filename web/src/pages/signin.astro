@@ -1,0 +1,12 @@
+---
+import Page from '../layouts/Page.astro';
+import AuthArt from '../components/AuthArt.astro';
+import AuthForms from '../app/auth/AuthForms';
+---
+
+<Page title="Sign in" description="Sign in to your Kinemi studio.">
+  <div class="auth">
+    <AuthForms client:load mode="signin" />
+    <AuthArt word="ACTION" take="TAKE 01" line="Pick up where you left off: your shots, takes and chats are waiting." />
+  </div>
+</Page>

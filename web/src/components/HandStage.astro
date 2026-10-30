@@ -1,0 +1,351 @@
+---
+// The robot hand: a pre-rendered poster that paints instantly, swapped for live WebGL on capable devices.
+// The viewfinder frame hangs off the index and thumb tips (positions from tools/render-hand.mjs).
+import { Picture } from 'astro:assets';
+import hand from '../assets/hand/hand.png';
+import tips from '../data/hand-tips.json';
+
+const vars = `--ix:${tips.index[0]};--iy:${tips.index[1]};--tx:${tips.thumb[0]};--ty:${tips.thumb[1]}`;
+---
+
+<div class="hand-stage" data-hand-stage style={vars}>
+  <span class="hand-shade" aria-hidden="true"></span>
+  <div class="frame" aria-hidden="true">
+    <i class="fr fr-top"></i>
+    <i class="fr fr-left"></i>
+    <i class="fr fr-right"></i>
+    <i class="fr fr-bottom"></i>
+    <i class="br br-tl"></i>
+    <i class="br br-tr"></i>
+    <i class="br br-bl"></i>
+    <i class="frame-center"></i>
+    <span class="frame-label frame-label-l mono"><b class="rec"></b>REC <span data-timecode>00:00:00:00</span></span>
+    <span class="frame-label frame-label-r mono">A-CAM · 35MM · F/1.8</span>
+    <span class="frame-label frame-label-v mono">9:16</span>
+  </div>
+  <Picture
+    src={hand}
+    alt=""
+    formats={['avif']}
+    fallbackFormat="webp"
+    widths={[480, 720, 960, 1200, 1440]}
+    sizes="(max-width: 760px) 86vw, 46vw"
+    class="hand-poster"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+  />
+</div>
+
+<style>
+  .hand-stage {
+    --fw: 1.38; /* frame width, in stage widths */
+    --fh: calc(var(--fw) * 0.45); /* 16:9 inside a 4:5 stage */
+    position: absolute;
+    bottom: 0;
+    left: 61%;
+    z-index: 2;
+    height: 94%;
+    aspect-ratio: 4 / 5;
+    transform: translateX(-52.8%);
+    pointer-events: none;
+  }
+
+  .hand-stage :global(picture),
+  .hand-stage :global(img),
+  .hand-stage :global(canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hand-stage :global(canvas) {
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+
+  .hand-stage:global(.is-live) :global(canvas) {
+    opacity: 1;
+  }
+
+  .hand-stage:global(.is-live) :global(.hand-poster) {
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out) 0.15s;
+  }
+
+  :global(.hand-poster) {
+    transform-origin: 70% 100%;
+  }
+
+  /* Desktop: the script picks poster or live render, so the poster waits for it. */
+  @media (pointer: fine) and (min-width: 900px) {
+    :global(.js) .hand-stage :global(.hand-poster) {
+      opacity: 0;
+      transform: translate3d(0, 24%, 0) rotate(6deg);
+    }
+
+    :global(.js) .hand-stage:global(.show-poster) :global(.hand-poster) {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 0.8s var(--ease-out),
+        transform 1.4s var(--ease-out);
+    }
+  }
+
+  /* Everywhere else the poster is the hand: it rises in straight away, no script needed. */
+  @media not all and (pointer: fine) and (min-width: 900px) {
+    :global(.js) .hand-stage :global(.hand-poster) {
+      animation: hand-rise 1.4s var(--ease-out) 0.15s backwards;
+    }
+  }
+
+  @keyframes hand-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24%, 0) rotate(6deg);
+    }
+  }
+
+  /* ---------------- viewfinder frame ---------------- */
+  .frame {
+    position: absolute;
+    left: calc((var(--ix) - var(--fw)) * 100%);
+    top: calc((var(--ty) - var(--fh)) * 100%);
+    width: calc(var(--fw) * 100%);
+    height: calc(var(--fh) * 100%);
+    color: var(--green-400);
+  }
+
+  .fr {
+    position: absolute;
+    display: block;
+  }
+
+  .fr-top,
+  .fr-bottom {
+    height: 2px;
+    background: repeating-linear-gradient(90deg, currentColor 0 10px, transparent 10px 14px);
+  }
+
+  .fr-left,
+  .fr-right {
+    width: 2px;
+    background: repeating-linear-gradient(180deg, currentColor 0 10px, transparent 10px 14px);
+  }
+
+  .fr-top {
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .fr-left {
+    top: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  /* from the index tip up to the top edge */
+  .fr-right {
+    top: 0;
+    right: -1px;
+    height: calc((var(--iy) - var(--ty) + var(--fh)) / var(--fh) * 100%);
+  }
+
+  /* from the thumb tip left to the left edge */
+  .fr-bottom {
+    bottom: -1px;
+    left: 0;
+    width: calc((var(--tx) - var(--ix) + var(--fw)) / var(--fw) * 100%);
+  }
+
+  .br {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 0 solid #fff;
+  }
+
+  .br-tl {
+    top: -6px;
+    left: -6px;
+    border-width: 2px 0 0 2px;
+  }
+
+  .br-tr {
+    top: -6px;
+    right: -6px;
+    border-width: 2px 2px 0 0;
+  }
+
+  .br-bl {
+    bottom: -6px;
+    left: -6px;
+    border-width: 0 0 2px 2px;
+  }
+
+  .frame-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    translate: -50% -50%;
+    background:
+      linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat,
+      linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat;
+    opacity: 0.6;
+  }
+
+  .frame-label {
+    position: absolute;
+    top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(4, 9, 15, 0.72);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    color: rgba(242, 247, 244, 0.85);
+    font-size: 10px;
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* soft occlusion behind the hand, so it separates from the letters */
+  .hand-shade {
+    position: absolute;
+    left: 18%;
+    top: 14%;
+    width: 72%;
+    height: 70%;
+    background: radial-gradient(closest-side, rgba(2, 6, 11, 0.55), rgba(2, 6, 11, 0.25) 55%, transparent);
+    pointer-events: none;
+  }
+
+  :global(.js) .hand-shade {
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out) 0.4s;
+  }
+
+  :global(.js) .hand-stage:global(.is-live) .hand-shade,
+  :global(.js) .hand-stage:global(.show-poster) .hand-shade {
+    opacity: 1;
+  }
+
+  .frame-label-l {
+    left: 14px;
+  }
+
+  .frame-label-r {
+    right: 14px;
+  }
+
+  .rec {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff4d4d;
+    box-shadow: 0 0 10px #ff4d4d;
+    animation: blink 1.2s steps(2, jump-none) infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0.15;
+    }
+  }
+
+  /* draw-in, once the hand has opened */
+  :global(.js) .frame > * {
+    opacity: 0;
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .frame > * {
+    opacity: 1;
+    transition: opacity 0.5s var(--ease-out);
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .fr-right {
+    animation: draw-up 0.7s var(--ease-out) both;
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .fr-bottom {
+    animation: draw-left 0.8s var(--ease-out) both;
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .fr-top {
+    animation: draw-left 0.9s var(--ease-out) 0.5s both;
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .fr-left {
+    animation: draw-down 0.9s var(--ease-out) 0.55s both;
+  }
+
+  :global(.js) .hand-stage:global(.is-framed) .br,
+  :global(.js) .hand-stage:global(.is-framed) .frame-label,
+  :global(.js) .hand-stage:global(.is-framed) .frame-center {
+    transition-delay: 1s;
+  }
+
+  @keyframes draw-up {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  @keyframes draw-left {
+    from {
+      clip-path: inset(0 0 0 100%);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  @keyframes draw-down {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  .frame-label-v {
+    display: none;
+  }
+
+  /* portrait hero (phones, tablets): a vertical 9:16 frame */
+  @container (max-aspect-ratio: 1 / 1) {
+    .hand-stage {
+      --fw: 0.56;
+      --fh: calc(var(--fw) * 1.4222);
+      left: 64%;
+      height: 66%;
+    }
+
+    .frame-label-r {
+      display: none;
+    }
+
+    .frame-label-v {
+      display: inline-flex;
+      top: auto;
+      bottom: 12px;
+      left: 14px;
+    }
+  }
+</style>
+
+<script>
+  import { initHand } from '../scripts/hero-hand';
+  initHand();
+</script>

@@ -1,0 +1,35 @@
+---
+// Every studio route is pre-rendered with the same island, so a deep link works on any static host.
+import AppLayout from '../../layouts/App.astro';
+import App from '../../app/App';
+import { SECTIONS, sectionById } from '../../app/data/sections';
+import { APP_TOOLS, toolBySlug } from '../../app/data/tools';
+
+export function getStaticPaths() {
+  return [
+    { params: { path: undefined } },
+    { params: { path: 'tools' } },
+    { params: { path: 'assets' } },
+    { params: { path: 'settings' } },
+    ...APP_TOOLS.map((t) => ({ params: { path: `tools/${t.slug}` } })),
+    ...SECTIONS.map((s) => ({ params: { path: `settings/${s.id}` } })),
+  ];
+}
+
+const path = Astro.params.path ?? '';
+const tool = path.startsWith('tools/') ? toolBySlug(path.slice(6)) : undefined;
+const section = path.startsWith('settings') ? (sectionById(path.slice(9)) ?? SECTIONS[0]) : undefined;
+const title = tool
+  ? `${tool.name} · Kinemi studio`
+  : section
+    ? `${section.label} · Settings · Kinemi studio`
+    : path === 'tools'
+      ? 'Tools · Kinemi studio'
+      : path === 'assets'
+        ? 'Assets · Kinemi studio'
+        : 'Kinemi studio';
+---
+
+<AppLayout title={title}>
+  <App client:load path={path} />
+</AppLayout>

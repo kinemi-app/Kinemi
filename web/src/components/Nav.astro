@@ -1,0 +1,173 @@
+---
+import Logo from './Logo.astro';
+import Button from './Button.astro';
+import { NAV, SITE } from '../data/site';
+import { CLOUD, GUESTS } from '../app/deploy';
+
+const base = import.meta.env.BASE_URL ?? '/';
+// the web version with sign-in required: the main button starts an account
+const cta = CLOUD && !GUESTS ? { href: `${base}signup/`, label: 'Get started' } : { href: SITE.appUrl, label: 'Launch App' };
+---
+
+<span class="nav-progress" aria-hidden="true"></span>
+<header class="nav" data-nav>
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo" aria-label="Kinemi, back to top">
+      <Logo />
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <span class="nav-pill" aria-hidden="true"></span>
+      {
+        NAV.map((item, i) => (
+          <a href={item.href} class:list={['nav-link', { 'is-active': i === 0 }]} data-spy={item.href.slice(1)}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a href={SITE.academyUrl} class="nav-link">Academy</a>
+    </nav>
+    <div class="nav-cta">
+      {CLOUD && <a href={`${base}signin/`} class="nav-signin">Sign in</a>}
+      <Button href={cta.href} variant="ghost" arrow={false}>{cta.label}</Button>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* reading progress: a thin green line along the top of the window */
+  .nav-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green-700), var(--green-400));
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    pointer-events: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .nav-progress {
+      animation: progress linear both;
+      animation-timeline: scroll(root);
+    }
+
+    @keyframes progress {
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    padding: 14px var(--gutter);
+    transition:
+      padding 0.5s var(--ease-out),
+      transform 0.5s var(--ease-out);
+  }
+
+  .nav-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 52px;
+    padding: 0 8px 0 12px;
+    border-radius: 999px;
+    transition:
+      background-color 0.5s,
+      box-shadow 0.5s,
+      backdrop-filter 0.5s;
+  }
+
+  .nav.is-scrolled .nav-inner {
+    background: rgba(8, 17, 27, 0.62);
+    box-shadow:
+      inset 0 0 0 1px var(--line),
+      0 20px 40px -24px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  }
+
+  .nav.is-hidden {
+    transform: translateY(-110%);
+  }
+
+  .nav-logo {
+    justify-self: start;
+    display: inline-flex;
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  .nav-links {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .nav-link {
+    position: relative;
+    z-index: 1;
+    padding: 7px 14px;
+    font-size: 14px;
+    color: var(--fg-2);
+    border-radius: 999px;
+    transition: color 0.3s;
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: #fff;
+  }
+
+  .nav-pill {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    height: calc(100% - 8px);
+    width: var(--pill-w, 0px);
+    transform: translateX(var(--pill-x, 0px));
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    opacity: var(--pill-o, 0);
+    transition:
+      transform 0.55s var(--ease-out),
+      width 0.55s var(--ease-out),
+      opacity 0.3s;
+  }
+
+  .nav-cta {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-signin {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--fg-2);
+    transition: color 0.3s;
+  }
+
+  .nav-signin:hover {
+    color: #fff;
+  }
+
+  @media (max-width: 760px) {
+    .nav-inner {
+      grid-template-columns: 1fr auto;
+    }
+
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

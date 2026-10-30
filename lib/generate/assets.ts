@@ -1,4 +1,5 @@
-import { comfyConfigFromEnv } from "./comfy";
+import { publicOrigin } from "../config/runtime";
+import { comfyAuthHeaders, comfyConfigFromEnv } from "./comfy";
 
 /**
  * Asset intake for the Comfy adapter. The route sniffs the bytes, then this module forwards the
@@ -117,22 +118,31 @@ export async function storeAsset(bytes: Uint8Array, contentType: string): Promis
   form.append("image", new Blob([payload], { type: contentType }), fileName);
   form.append("type", "input");
 
+  // A keyed deployment refuses an upload without the key; fetch sets the multipart type.
   let response: Response;
   try {
     response = await fetch(`${config.url}${UPLOAD_PATH}`, {
       method: "POST",
+      headers: comfyAuthHeaders(config),
       body: form,
       signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
     });
   } catch (cause) {
-    throw new Error(`Comfy could not be reached at ${config.url}`, { cause });
+    throw new Error(`Comfy could not be reached at ${publicOrigin(config.url)} for the upload`, {
+      cause,
+    });
   }
 
   if (!response.ok) {
     throw new Error(`Comfy refused the upload: HTTP ${response.status}`);
   }
 
-  const body = (await response.json()) as { name?: unknown; subfolder?: unknown };
+  let body: { name?: unknown; subfolder?: unknown };
+  try {
+    body = (await response.json()) as { name?: unknown; subfolder?: unknown };
+  } catch {
+    throw new Error("Comfy's upload answered without JSON");
+  }
   if (typeof body.name !== "string" || body.name === "") {
     throw new Error("Comfy's upload answered without a name");
   }

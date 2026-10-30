@@ -1,0 +1,276 @@
+---
+import PixelText from './PixelText.astro';
+import PixelIcon from './PixelIcon.astro';
+import { TOOLS } from '../data/tools';
+import { toolUrl } from '../data/site';
+import { APP_TOOLS } from '../app/data/tools';
+
+const slug = Object.fromEntries(APP_TOOLS.map((t) => [t.id, t.slug]));
+---
+
+<section class="tools" id="studios" data-spy-target>
+  <div class="container">
+    <header class="tools-head">
+      <h2 class="tools-pixel" data-reveal="wipe">
+        <PixelText text="16 TOOLS" stops={['#d6fbe6', '#7be7a9', '#2fc56d']} label="16 tools" />
+      </h2>
+      <div class="tools-intro">
+        <h3 data-reveal style="--d:80">In one place, from first frame to final cut</h3>
+        <p class="lede" data-reveal style="--d:140">
+          Build a shot with real camera language, queue a shot list, re-shoot a still, move a performance onto another face, build a
+          cast and edit the finished clip. Then go further with voice, ads, fashion, a node canvas, 3D previz, a campaign planner and a
+          4K upscaler. Or skip the menus and ask the chat: it runs the right tool for you.
+        </p>
+      </div>
+    </header>
+
+    <ul class="tools-grid" data-spotlight>
+      {
+        TOOLS.map((t, i) => (
+          <li data-reveal style={`--d:${(i % 4) * 70 + Math.floor(i / 4) * 40}`}>
+            <a class:list={['tool', { 'tool-studio': t.studio }]} href={toolUrl(slug[t.icon])} data-spot>
+              <span class="tool-top">
+                <PixelIcon name={t.icon} />
+                <span class="tool-index mono">{String(i + 1).padStart(2, '0')}</span>
+              </span>
+              <span class="tool-name">{t.name}</span>
+              <span class="tool-tag mono">{t.tag}</span>
+              <span class="tool-text">{t.text}</span>
+              <span class="tool-open">
+                Open {t.name}
+                <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .tools {
+    padding: clamp(80px, 9vw, 140px) 0;
+  }
+
+  .tools-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: clamp(32px, 6vw, 96px);
+    margin-bottom: clamp(40px, 5vw, 64px);
+  }
+
+  .tools-pixel {
+    width: min(100%, 520px);
+  }
+
+  .tools-pixel :global(svg) {
+    width: 100%;
+  }
+
+  .tools-intro {
+    display: grid;
+    gap: 16px;
+  }
+
+  .tools-intro h3 {
+    font-size: clamp(26px, 2.4vw, 34px);
+  }
+
+  .tools-intro .lede {
+    max-width: 52ch;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tools-grid > li {
+    display: flex;
+  }
+
+  .tool {
+    --sx: -200px;
+    --sy: -200px;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 8px;
+    width: 100%;
+    padding: 22px 22px 20px;
+    border-radius: var(--r-md);
+    background:
+      radial-gradient(320px circle at var(--sx) var(--sy), rgba(57, 216, 121, 0.12), transparent 60%),
+      linear-gradient(180deg, rgba(18, 37, 58, 0.7), rgba(10, 21, 33, 0.7));
+    box-shadow: inset 0 0 0 1px var(--line);
+    isolation: isolate;
+    transition:
+      transform 0.5s var(--ease-out),
+      box-shadow 0.4s;
+  }
+
+  /* a border that lights up under the cursor */
+  .tool::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(220px circle at var(--sx) var(--sy), rgba(123, 231, 169, 0.75), transparent 70%);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+
+  .tool:hover::before,
+  .tool:focus-visible::before {
+    opacity: 1;
+  }
+
+  .tool:hover {
+    transform: translateY(-3px);
+  }
+
+  .tool-studio {
+    background:
+      radial-gradient(320px circle at var(--sx) var(--sy), rgba(57, 216, 121, 0.12), transparent 60%),
+      linear-gradient(180deg, rgba(12, 58, 47, 0.5), rgba(10, 21, 33, 0.7));
+  }
+
+  .tool-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .tool-top :global(.px-icon) {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* on hover each colour layer of the icon hops, one after the other */
+  .tool:hover .tool-top :global(.px-icon path) {
+    animation: px-hop 0.6s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 80ms);
+  }
+
+  @keyframes px-hop {
+    40% {
+      transform: translateY(-1px);
+    }
+  }
+
+  .tool-index {
+    color: var(--fg-3);
+    font-size: 10.5px;
+  }
+
+  .tool-name {
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .tool-tag {
+    color: var(--green-300);
+    font-size: 10px;
+  }
+
+  .tool-text {
+    margin-top: 4px;
+    color: var(--fg-2);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .tool-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--fg);
+    opacity: 0.55;
+    transition:
+      opacity 0.3s,
+      gap 0.4s var(--ease-out);
+  }
+
+  .tool:hover .tool-open {
+    opacity: 1;
+    gap: 12px;
+  }
+
+  @media (max-width: 1080px) {
+    .tools-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 860px) {
+    .tools-head {
+      grid-template-columns: 1fr;
+    }
+
+    .tools-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* phones: a compact two-column grid, descriptions clamped to three lines */
+  @media (max-width: 520px) {
+    .tools-grid {
+      gap: 8px;
+    }
+
+    .tool {
+      gap: 6px;
+      padding: 14px 14px 12px;
+    }
+
+    .tool-top {
+      margin-bottom: 6px;
+    }
+
+    .tool-top :global(.px-icon) {
+      width: 28px;
+      height: 28px;
+    }
+
+    .tool-name {
+      font-size: 16px;
+    }
+
+    .tool-tag {
+      font-size: 9px;
+    }
+
+    .tool-text {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .tool-open {
+      display: none;
+    }
+  }
+</style>

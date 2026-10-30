@@ -1,0 +1,25 @@
+---
+// Any address that doesn't exist. Static hosts (Netlify, Vercel, Cloudflare Pages) serve it on their own.
+import Page from '../layouts/Page.astro';
+import PixelText from '../components/PixelText.astro';
+import { SITE } from '../data/site';
+
+const base = import.meta.env.BASE_URL ?? '/';
+---
+
+<Page title="Shot not found" description="This page doesn't exist." noindex>
+  <section class="lost">
+    <PixelText text="CUT!" label="Cut!" stops={['#e9fff2', '#39d879']} />
+    <h1>This shot isn’t in the edit</h1>
+    <p>The page you asked for doesn’t exist, or it moved. Pick it up from the start, or go straight to the studio.</p>
+    <div class="lost-slate" aria-hidden="true">
+      <span>SCENE <b>404</b></span>
+      <span>TAKE <b>01</b></span>
+      <span>ROLL <b>K</b></span>
+    </div>
+    <div class="lost-actions">
+      <a class="pg-btn pg-btn-primary" href={base}>Back to the start</a>
+      <a class="pg-btn pg-btn-ghost" href={SITE.appUrl}>Open the studio</a>
+    </div>
+  </section>
+</Page>

@@ -161,15 +161,18 @@ function textOf(args) {
   return args.map((arg) => arg.value ?? arg.description ?? arg.type).join(" ");
 }
 
-async function launchBrowser(binary, profile) {
+/** Software WebGL, for a screenshot that has to show the studio's 3D view. */
+const WEBGL_ARGS = ["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--enable-webgl", "--ignore-gpu-blocklist"];
+
+async function launchBrowser(binary, profile, { webgl = false } = {}) {
   const child = spawn(
     binary,
     [
       ...headlessArgs(binary),
+      ...(webgl ? WEBGL_ARGS : ["--disable-gpu"]),
       "--remote-debugging-port=0",
       `--user-data-dir=${profile}`,
       "--no-sandbox",
-      "--disable-gpu",
       "--disable-dev-shm-usage",
       "--hide-scrollbars",
       `--window-size=${VIEWPORT.width},${VIEWPORT.height}`,
@@ -207,14 +210,14 @@ async function launchBrowser(binary, profile) {
 }
 
 /** Launch one browser for the whole run and hand back the calls the checks need. */
-export async function openBrowser() {
+export async function openBrowser({ webgl = false } = {}) {
   const profile = await mkdtemp(join(tmpdir(), "kinemi-chrome-"));
-  const { child, wsUrl } = await launchBrowser(findChrome(), profile);
+  const { child, wsUrl } = await launchBrowser(findChrome(), profile, { webgl });
   const client = devtoolsClient(wsUrl);
   await client.opened;
 
   /** Navigate, collect console errors and uncaught exceptions, and wait for hydration. */
-  async function openPage(url) {
+  async function openPage(url, { width, height, dpr = 1, mobile = false } = {}) {
     const { targetId } = await client.send("Target.createTarget", { url: "about:blank" });
     const { sessionId } = await client.send("Target.attachToTarget", { targetId, flatten: true });
 
@@ -240,6 +243,9 @@ export async function openBrowser() {
 
     await client.send("Page.enable", {}, sessionId);
     await client.send("Runtime.enable", {}, sessionId);
+    if (width && height) {
+      await client.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: dpr, mobile }, sessionId);
+    }
 
     const loaded = new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error(`the page did not finish loading ${url}`)), 20000);
@@ -279,6 +285,21 @@ export async function openBrowser() {
     await writeFile(path, Buffer.from(shot.data, "base64"));
   }
 
+  /** Move the real mouse to a point in the page, so hover, pointerover and pointerenter fire. */
+  async function mouse(sessionId, x, y) {
+    await client.send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y }, sessionId);
+  }
+
+  /** Set a page's viewport and pixel density, for a picture at a slot's own size. */
+  async function resize(sessionId, { width, height, dpr = 1, mobile = false }) {
+    await client.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: dpr, mobile }, sessionId);
+  }
+
+  /** Force a media feature, such as reduced motion, so a capture is not caught mid-animation. */
+  async function media(sessionId, features) {
+    await client.send("Emulation.setEmulatedMedia", { features }, sessionId);
+  }
+
   /** Close the browser and delete its throwaway profile. */
   async function close() {
     client.close();
@@ -286,5 +307,5 @@ export async function openBrowser() {
     await rm(profile, { recursive: true, force: true }).catch(() => {});
   }
 
-  return { openPage, evaluate, capture, close };
+  return { openPage, evaluate, capture, mouse, close, resize, media };
 }

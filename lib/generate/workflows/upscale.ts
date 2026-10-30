@@ -80,7 +80,7 @@ export function graph(request: GenerateRequest): WorkflowGraph {
   readSourceDuration(params);
 
   const builder = createGraphBuilder();
-  const video = addNode(builder, "LoadVideo", { video: videoName });
+  const video = addNode(builder, "LoadVideo", { file: videoName });
   const parts = addNode(builder, "GetVideoComponents", { video: [video, 0] });
 
   const loader = addNode(builder, "UpscaleModelLoader", {

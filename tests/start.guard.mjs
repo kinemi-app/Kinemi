@@ -38,6 +38,8 @@ const LAUNCHER_ENV = [
   "KINEMI_FAKE_DISK_GB",
   "START_FAKE_HANG_UP",
   "START_FAKE_IGNORE_UP_TERM",
+  "KINEMI_LOCAL_CLI",
+  "KINEMI_LOCAL_CLI_BOUND",
 ];
 
 /**
@@ -48,6 +50,7 @@ const FAKE_COMMAND = String.raw`import { appendFileSync } from "node:fs";
 
 const args = process.argv.slice(2);
 appendFileSync(process.env.START_FAKE_LOG, args.join(" ") + "\n");
+if (args[0] === "start") appendFileSync(process.env.START_FAKE_LOG, "bridge " + (process.env.KINEMI_LOCAL_CLI_BOUND ?? "unset") + "\n");
 
 if (args[0] === "start" && process.env.START_FAKE_STAY_ALIVE === "1") {
   process.on("SIGTERM", () => {
@@ -263,7 +266,7 @@ test("KINEMI_SKIP_GUARD bypasses the floors", { timeout: 20000 }, async () => {
     const result = await withTimeout(run.done, 15000, "the launcher");
     assert.equal(result.code, 0);
     assert.doesNotMatch(result.output, /ask the user/i);
-    assert.ok((await readCalls(log)).includes("start"), "Next must run when the guard is skipped");
+    assert.ok((await readCalls(log)).includes("start -H 127.0.0.1"), "Next must run when the guard is skipped");
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -329,26 +332,34 @@ test("a Next process that exits by itself also takes the stack down", { timeout:
   }
 });
 
-test("comfortable fakes start Next and exit with its code", { timeout: 20000 }, async () => {
+/** Run the launcher with comfortable fakes and `-p 4321`; resolves to its exit code and Next's calls. */
+async function launchComfortable(extraEnv = {}) {
   const directory = await mkdtemp(join(tmpdir(), "kinemi-guard-"));
   const log = join(directory, "calls.log");
   try {
     const next = await writeFakeCommand(directory, "fake-next");
-    const run = launch(["-p", "4321"], {
-      ...COMFORTABLE_FAKES,
-      KINEMI_NEXT_CMD: next,
-      START_FAKE_LOG: log,
-    });
-
+    const run = launch(["-p", "4321"], { ...COMFORTABLE_FAKES, KINEMI_NEXT_CMD: next, START_FAKE_LOG: log, ...extraEnv });
     const result = await withTimeout(run.done, 15000, "the launcher");
-    assert.equal(result.code, 0);
-
-    const calls = await readCalls(log);
-    assert.ok(calls.includes("start -p 4321"), `missing the forwarded port in:\n${calls.join("\n")}`);
-    assert.ok(calls.every((line) => !line.startsWith("compose ")), "no compose file means no docker call");
+    return { code: result.code, calls: await readCalls(log) };
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+}
+
+test("comfortable fakes start Next and exit with its code", { timeout: 20000 }, async () => {
+  const { code, calls } = await launchComfortable();
+  assert.equal(code, 0);
+  assert.ok(calls.includes("start -p 4321 -H 127.0.0.1"), `missing the forwarded port in:\n${calls.join("\n")}`);
+  assert.ok(calls.includes("bridge 1"), "Next on loopback gets the chat bridge");
+  assert.ok(calls.every((line) => !line.startsWith("compose ")), "no compose file means no docker call");
+});
+
+test("KINEMI_LOCAL_CLI=off leaves Next on every interface with no bridge, whatever the env says", { timeout: 20000 }, async () => {
+  const { code, calls } = await launchComfortable({ KINEMI_LOCAL_CLI: "off", KINEMI_LOCAL_CLI_BOUND: "1" });
+  assert.equal(code, 0);
+  assert.ok(calls.includes("start -p 4321"), `Next must keep its own address:\n${calls.join("\n")}`);
+  // "0", not unset: `next start` fills unset variables from .env, so a stray .env line would switch it on
+  assert.ok(calls.includes("bridge 0"), "Next must be told the bridge is off");
 });
 
 test(

@@ -3,7 +3,9 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: [".next/**", "node_modules/**", "next-env.d.ts"] },
+  // web/ is the Astro frontend with its own type check (npm --prefix web run check);
+  // _incoming/ holds unpacked downloads and is never source.
+  { ignores: [".next/**", "node_modules/**", "next-env.d.ts", "web/**", "_incoming/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

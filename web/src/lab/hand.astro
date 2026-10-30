@@ -1,0 +1,86 @@
+---
+// Dev-only workbench for the 3D hand, mounted at /lab/hand by astro.config.mjs during `astro dev`.
+// tools/render-hand.mjs uses it to render the poster, the fingertip positions and the GLB.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hand lab</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: radial-gradient(60% 50% at 20% 100%, #1a6b45, transparent), radial-gradient(60% 50% at 80% 100%, #0f6f6a, transparent), #050d16;
+        min-height: 100vh;
+      }
+      body.transparent {
+        background: transparent;
+      }
+      #stage {
+        position: relative;
+        width: min(80vh, 90vw);
+        aspect-ratio: 4 / 5;
+        margin: 2vh auto;
+        outline: 1px dashed rgba(255, 255, 255, 0.15);
+      }
+      #stage canvas {
+        width: 100%;
+        height: 100%;
+      }
+      .tip {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        margin: -5px 0 0 -5px;
+        border-radius: 50%;
+        border: 1px solid #39d879;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"><span class="tip" id="ti"></span><span class="tip" id="tt"></span></div>
+    <script>
+      import { mountHand, STAGE } from '../scripts/hand/scene';
+      const params = new URLSearchParams(location.search);
+      // ?rx=&ry=&rz= (radians) override the stage rotation while exploring angles
+      for (const k of ['x', 'y', 'z'] as const) {
+        const v = params.get('r' + k);
+        if (v !== null) STAGE.rotation[k] = Number(v);
+      }
+      const stage = document.getElementById('stage')!;
+      const ti = document.getElementById('ti')!;
+      const tt = document.getElementById('tt')!;
+      if (params.has('transparent')) document.body.classList.add('transparent');
+      const hand = mountHand(stage, {
+        intro: !params.has('still'),
+        preserve: true,
+        toneMapping: (params.get('tm') as 'aces' | 'agx' | 'neutral') ?? undefined,
+        exposure: params.has('ex') ? Number(params.get('ex')) : undefined,
+        onTips: (t) => {
+          ti.style.left = t.index[0] * 100 + '%';
+          ti.style.top = t.index[1] * 100 + '%';
+          tt.style.left = t.thumb[0] * 100 + '%';
+          tt.style.top = t.thumb[1] * 100 + '%';
+        },
+      });
+      const w = window as unknown as Record<string, unknown>;
+      w.__hand = hand;
+      w.__still = (width: number, height: number) => {
+        const tips = hand.renderStill(width, height);
+        return { tips, png: hand.canvas.toDataURL('image/png') };
+      };
+      w.__glb = async () => {
+        const { GLTFExporter } = await import('three/examples/jsm/exporters/GLTFExporter.js');
+        const exporter = new GLTFExporter();
+        const buf = (await exporter.parseAsync(hand.rig.root, { binary: true })) as ArrayBuffer;
+        let s = '';
+        const bytes = new Uint8Array(buf);
+        for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        return btoa(s);
+      };
+      w.__ready = true;
+    </script>
+  </body>
+</html>

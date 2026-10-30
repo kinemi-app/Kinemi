@@ -1,0 +1,102 @@
+---
+// A phone drawn in CSS. Everything scales with the phone's width (container units).
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['phone', className]}>
+  <i class="phone-btn phone-btn-a" aria-hidden="true"></i>
+  <i class="phone-btn phone-btn-b" aria-hidden="true"></i>
+  <i class="phone-btn phone-btn-c" aria-hidden="true"></i>
+  <i class="phone-btn phone-btn-d" aria-hidden="true"></i>
+  <div class="phone-body">
+    <div class="phone-screen">
+      <slot />
+      <i class="phone-island" aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+
+<style>
+  .phone {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 71.6 / 146.6;
+    container-type: inline-size;
+  }
+
+  .phone-body {
+    position: absolute;
+    inset: 0;
+    padding: 3.3cqw;
+    border-radius: 15.5cqw;
+    background: linear-gradient(140deg, #5a6670 0%, #1a2128 18%, #0b0f13 55%, #222a31 85%, #4b5660 100%);
+    box-shadow:
+      inset 0 0 0 0.45cqw rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1.2cqw #07090c,
+      0 2cqw 6cqw -2cqw rgba(0, 0, 0, 0.7),
+      0 12cqw 24cqw -8cqw rgba(0, 0, 0, 0.75);
+  }
+
+  .phone-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12.4cqw;
+    background: #05090e;
+    isolation: isolate;
+  }
+
+  .phone-screen > :global(*) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .phone-island {
+    position: absolute;
+    z-index: 3;
+    top: 2.8cqw;
+    left: 50%;
+    width: 30cqw;
+    height: 8.8cqw;
+    translate: -50% 0;
+    border-radius: 99px;
+    background: #000;
+  }
+
+  .phone-btn {
+    position: absolute;
+    width: 1.2cqw;
+    border-radius: 1cqw;
+    background: linear-gradient(90deg, #11161b, #4b5660);
+  }
+
+  .phone-btn-a {
+    left: -0.8cqw;
+    top: 18%;
+    height: 6%;
+  }
+
+  .phone-btn-b {
+    left: -0.8cqw;
+    top: 28%;
+    height: 11%;
+  }
+
+  .phone-btn-c {
+    left: -0.8cqw;
+    top: 41%;
+    height: 11%;
+  }
+
+  .phone-btn-d {
+    right: -0.8cqw;
+    top: 30%;
+    height: 16%;
+    background: linear-gradient(270deg, #11161b, #4b5660);
+  }
+</style>

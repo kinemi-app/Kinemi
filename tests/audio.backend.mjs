@@ -167,23 +167,39 @@ after(async () => {
   await comfy?.stop();
 });
 
-test("voiceover sends a Kokoro graph with a SaveAudio output", async () => {
+test("voiceover sends a Chatterbox graph with a SaveAudio output", async () => {
   const job = await submit({
     mode: "audio",
-    modelId: "kokoro-tts",
+    modelId: "chatterbox",
     prompt: "The rain has not stopped.",
     durationS: 4,
-    params: { feature: "voiceover", voice: "warm", speed: 1.1 },
+    params: { feature: "voiceover" },
   });
 
   assert.equal(job.status, "succeeded");
   assert.equal(job.result.kind, "audio");
 
   const graph = lastGraph();
-  assert.ok(classes(graph).includes("KokoroTTS"), "the graph should run Kokoro");
+  assert.ok(classes(graph).includes("ChatterboxTTS"), "the graph should run Chatterbox");
+  assert.ok(!classes(graph).some((type) => /Kokoro/i.test(type)), "the graph should have no Kokoro node");
   assert.ok(classes(graph).includes("SaveAudio"), "the graph should declare an audio output");
-  assert.equal(nodeOf(graph, "KokoroTTS")?.inputs.speed, 1.1);
-  assert.equal(nodeOf(graph, "KokoroTTS")?.inputs.voice, "af_heart");
+  assert.equal(nodeOf(graph, "ChatterboxTTS")?.inputs.text, "The rain has not stopped.");
+});
+
+test("a voiceover naming the removed kokoro-tts model is refused as an unknown model", async () => {
+  const response = await fetch(`${BASE}/api/generate`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      mode: "audio",
+      modelId: "kokoro-tts",
+      prompt: "The rain has not stopped.",
+      durationS: 4,
+      params: { feature: "voiceover" },
+    }),
+  });
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error, 'unknown model "kokoro-tts"');
 });
 
 test("voice cloning sends the uploaded name, never the browser file name", async () => {
@@ -257,7 +273,7 @@ test("voice swap loads both uploads and declares a video output", async () => {
   assert.ok(classes(graph).includes("ChatterboxVC"), "the graph should run voice conversion");
   assert.ok(classes(graph).includes("CreateVideo"), "the graph should rebuild the clip");
   assert.ok(classes(graph).includes("SaveVideo"), "the graph should declare a video output");
-  assert.equal(nodeOf(graph, "LoadVideo")?.inputs.video, videoName);
+  assert.equal(nodeOf(graph, "LoadVideo")?.inputs.file, videoName);
   assert.equal(nodeOf(graph, "LoadAudio")?.inputs.audio, audioName);
 });
 
@@ -334,10 +350,10 @@ test("audio and upscale still answer 502 when the Comfy endpoint is unreachable"
     {
       workflow: "audio.voiceover",
       mode: "audio",
-      modelId: "kokoro-tts",
+      modelId: "chatterbox",
       prompt: "A line for the failure path.",
       durationS: 3,
-      params: { feature: "voiceover", voice: "warm", speed: 1 },
+      params: { feature: "voiceover" },
     },
     {
       workflow: "audio.sfx",

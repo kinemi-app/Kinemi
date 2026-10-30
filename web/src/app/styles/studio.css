@@ -1,0 +1,230 @@
+/* Studio polish that came after app.css stopped growing: toasts, the composer, the chat header,
+   the settings layout. */
+
+/* ------------------------------------------------------------------
+   Toasts fade out the way they came in
+------------------------------------------------------------------- */
+.toast.is-leaving {
+  pointer-events: none;
+  animation: toast-out 0.26s var(--ease-out) forwards;
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(24px) scale(0.97);
+  }
+}
+
+html.motion-reduce .toast.is-leaving {
+  animation-duration: 0.01s;
+}
+
+/* ------------------------------------------------------------------
+   Composer: round send, a bigger attachment with its own X, the move to the dock
+------------------------------------------------------------------- */
+.composer {
+  view-transition-name: composer;
+}
+
+::view-transition-group(composer) {
+  animation-duration: 0.55s;
+  animation-timing-function: var(--ease-out);
+}
+
+.send-btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.composer-attach {
+  padding: 4px 12px 4px 4px;
+}
+
+.attach-thumb {
+  position: relative;
+  width: 72px;
+  height: 46px;
+  border-radius: 8px;
+}
+
+.attach-thumb .poster {
+  width: 100%;
+  height: 100%;
+}
+
+.attach-x {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.16s;
+}
+
+.attach-thumb:hover .attach-x,
+.attach-x:focus-visible {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------
+   Attach a render: search
+------------------------------------------------------------------- */
+.picker-search {
+  margin-top: 12px;
+}
+
+.picker-empty {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--fg-3);
+}
+
+/* ------------------------------------------------------------------
+   Settings: the section list and the page sit side by side, centred as one block
+------------------------------------------------------------------- */
+.set-shell {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  width: min(100%, 1000px);
+  margin-inline: auto;
+}
+
+.set-side {
+  position: sticky;
+  top: 0;
+  display: grid;
+  gap: 2px;
+  padding-top: 6px;
+}
+
+.set-side-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--fg-2);
+  transition:
+    color 0.16s,
+    background 0.16s;
+}
+
+.set-side-link:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.set-side-link.is-on {
+  color: var(--green-300);
+  background: rgba(57, 216, 121, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(57, 216, 121, 0.28);
+}
+
+.set-main .set-head,
+.set-main .set-body {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .set-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .set-side {
+    display: none;
+  }
+}
+
+/* above the collapse point the section list sits beside the page, so the chips are the mobile fallback only */
+@media (min-width: 861px) {
+  .set-chips {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Chat header: pen to rename in place, rest on the trash to fill a red bar along the top edge
+------------------------------------------------------------------- */
+.thread-head {
+  position: relative;
+}
+
+/* The main panel clips overflow at the top, so header tips open down into it. */
+.thread-head [data-tip]:hover::after,
+.thread-head [data-tip]:focus-visible::after {
+  top: calc(100% + 8px);
+  right: 0;
+  bottom: auto;
+  left: auto;
+  translate: 0 0;
+}
+
+.thread-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thread-title .chat-rename {
+  flex: 1;
+  padding: 2px 0;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(57, 216, 121, 0.45);
+}
+
+.thread-title:has(.chat-rename) {
+  flex: 1;
+}
+
+.head-del {
+  position: relative;
+  color: #ff9aa4;
+}
+
+.head-del:hover,
+.head-del:focus-visible {
+  color: #fff;
+  background: rgba(255, 90, 106, 0.16);
+}
+
+.head-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #e5484d;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.15s ease-out;
+  pointer-events: none;
+}
+
+.thread-head.is-holding .head-fill {
+  transform: scaleX(1);
+  transition: transform 1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thread-head.is-holding .head-fill {
+    transition-timing-function: steps(4);
+  }
+}
+
+/* On a short phone the welcome column overflows and flex shrank the orb, whose absolutely
+   positioned logo then spilled onto the headline. Keep its size and let the column scroll. */
+.welcome-orb {
+  flex: none;
+}

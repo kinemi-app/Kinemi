@@ -61,11 +61,27 @@ head_commit=$(git rev-parse HEAD)
 [[ "$tag_commit" == "$head_commit" ]] || \
   fail "tag $release_tag must point at the checked-out HEAD."
 
-for internal_path in TODO.md todo; do
-  if git cat-file -e "$tag_commit:$internal_path" 2>/dev/null; then
-    fail "the release contains internal planning path '$internal_path'; remove it from the release commit first."
+# Internal planning and local-only paths never reach the public release.
+# `TODO.md`, `todo/` and `AGENTS.md` are local work, never release source. `docs/` holds the
+# human docs, which ship; the research docs inside it are refused through `.gitignore`, which names
+# each of them. `.gitignore` is allowed: this repository's own rules match it (`/.gitignore`
+# inside `.gitignore`), so the check below would otherwise refuse a release that carries it.
+is_internal_path() {
+  [[ "$1" == '.gitignore' ]] && return 1
+  case "$1" in
+    TODO.md|todo|todo/*|AGENTS.md|\
+      .env|.env*.local|temp|temp/*|wl-copy|tests/screenshots|tests/screenshots/*)
+      return 0
+      ;;
+  esac
+  git check-ignore --no-index --quiet -- "$1"
+}
+
+while IFS= read -r release_path; do
+  if is_internal_path "$release_path"; then
+    fail "the release contains internal path '$release_path'; remove it from the release commit first."
   fi
-done
+done < <(git ls-tree -r --name-only "$tag_commit")
 
 printf '\nTarget repository: %s\nRelease tag:       %s\nCommit:            %s\n' \
   "$OFFICIAL_REPOSITORY" "$release_tag" "$tag_commit"

@@ -1,3 +1,5 @@
+import type { JobLive } from "./generate/comfy-progress";
+
 export type Mode =
   | "cinematic"
   | "reshoot"
@@ -7,7 +9,8 @@ export type Mode =
   | "audio"
   | "ads"
   | "fashion"
-  | "upscale";
+  | "upscale"
+  | "depth";
 
 /** What a run on a model produces. The graph declares the result kind at run time. */
 export type ModelKind = "image" | "video" | "audio";
@@ -73,6 +76,8 @@ export type JobResult = {
   kind: ModelKind;
   width: number;
   height: number;
+  /** Demo audio: whether the sound came from KINEMI_TTS_CMD or the synthesised tone. */
+  demoVoice?: "tone" | "command";
 };
 
 export type Job = {
@@ -82,6 +87,8 @@ export type Job = {
   createdAt: number;
   request: GenerateRequest;
   demo: boolean;
+  /** Real render progress, GPU time and Cloud credits; only a Comfy run carries it. */
+  live?: JobLive;
   result?: JobResult;
   error?: string;
 };

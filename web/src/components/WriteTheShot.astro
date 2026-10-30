@@ -1,0 +1,323 @@
+---
+import PixelText from './PixelText.astro';
+import Button from './Button.astro';
+import { SITE } from '../data/site';
+
+// Messages to the built-in chat, each routed to the tool that handles it.
+// They type themselves out when the panel scrolls into view.
+const prompts = [
+  { tool: 'Cinematic', text: 'Slow dolly-in on a rain-soaked neon street, 35mm, f/1.8' },
+  { tool: 'Re-shoot', text: 'Orbit 30° to the left and tilt down. Leave the subject alone.' },
+  { tool: 'Genjutsu', text: 'Move this dance onto my cast character, joy to surprise' },
+  { tool: 'Soul', text: 'Sunset over a desert motel, as a five-colour palette' },
+];
+---
+
+<section class="write">
+  <div class="container write-grid">
+    <div class="write-copy">
+      <h2 class="write-pixel" data-reveal="wipe">
+        <PixelText text={'WRITE\nTHE SHOT'} lineGap={3} stops={['#d6fbe6', '#7be7a9', '#2fc56d']} label="Write the shot" />
+      </h2>
+      <h3 data-reveal style="--d:80">Just type it. The chat runs the tools.</h3>
+      <p class="lede" data-reveal style="--d:140">
+        Kinemi comes with a chat. Describe what you want in plain words, from a slow dolly-in to a five-colour palette, and it picks
+        the right tool and runs it for you. Made for directors, editors, studios and students.
+      </p>
+      <div data-reveal style="--d:200">
+        <Button href={SITE.appUrl}>Try the chat</Button>
+      </div>
+    </div>
+
+    <div class="write-panel" data-reveal style="--d:120" data-typewriter data-spotlight>
+      {
+        prompts.map((p, i) => (
+          <article class="prompt" data-spot style={`--i:${i}`}>
+            <svg class="prompt-spark" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor" />
+            </svg>
+            <p class="prompt-text">
+              <span class="prompt-full">{p.text}</span>
+              <span class="prompt-typed" aria-hidden="true" />
+            </p>
+            <span class="prompt-tool mono">
+              Chat
+              <svg viewBox="0 0 16 16" width="10" height="10" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <b>{p.tool}</b>
+            </span>
+          </article>
+        ))
+      }
+      <div class="composer" aria-hidden="true">
+        <span class="composer-text">Describe a shot, Kinemi picks the tool</span>
+        <span class="composer-send">
+          <svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3M3.5 7.5L8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .write {
+    padding: clamp(72px, 8vw, 120px) 0;
+  }
+
+  .write-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(40px, 7vw, 120px);
+  }
+
+  .write-copy {
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+    max-width: 480px;
+  }
+
+  .write-pixel {
+    width: min(100%, 360px);
+    margin-bottom: 18px;
+  }
+
+  .write-pixel :global(svg) {
+    width: 100%;
+  }
+
+  .write-copy h3 {
+    font-size: clamp(26px, 2.4vw, 34px);
+  }
+
+  .write-copy .lede {
+    margin-bottom: 14px;
+  }
+
+  .write-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 14px;
+    border-radius: var(--r-lg);
+    background:
+      radial-gradient(80% 60% at 50% 100%, rgba(57, 216, 121, 0.22), transparent 70%),
+      linear-gradient(180deg, rgba(13, 27, 42, 0.9), rgba(12, 58, 47, 0.75));
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 231, 169, 0.22),
+      0 40px 100px -40px rgba(57, 216, 121, 0.35);
+  }
+
+  .prompt {
+    --sx: 50%;
+    --sy: 0%;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 14px;
+    min-height: 196px;
+    padding: 18px 18px 16px;
+    border-radius: var(--r-md);
+    background:
+      radial-gradient(240px circle at var(--sx) var(--sy), rgba(57, 216, 121, 0.16), transparent 60%),
+      linear-gradient(180deg, rgba(20, 90, 55, 0.55), rgba(13, 27, 42, 0.65));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition:
+      transform 0.5s var(--ease-out),
+      box-shadow 0.5s var(--ease-out);
+  }
+
+  .prompt:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 231, 169, 0.35),
+      0 24px 50px -24px rgba(57, 216, 121, 0.5);
+  }
+
+  .prompt-spark {
+    width: 15px;
+    color: var(--green-200);
+    animation: twinkle 3.2s var(--ease-in-out) infinite;
+    animation-delay: calc(var(--i) * -0.8s);
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(0.7) rotate(45deg);
+      opacity: 0.5;
+    }
+  }
+
+  .prompt-text {
+    position: relative;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+
+  .prompt-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(242, 247, 244, 0.5);
+    font-size: 10.5px;
+  }
+
+  .prompt-tool b {
+    font-weight: 500;
+    color: var(--green-300);
+  }
+
+  /* a chat composer under the messages */
+  .composer {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 52px;
+    padding: 0 8px 0 18px;
+    border-radius: 999px;
+    background: rgba(4, 9, 15, 0.55);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .composer-text {
+    overflow: hidden;
+    color: var(--fg-3);
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .composer-send {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--green-400);
+    color: var(--ink-1);
+    box-shadow: 0 0 0 0 rgba(57, 216, 121, 0.5);
+    animation: ping 2.8s var(--ease-out) infinite;
+  }
+
+  @keyframes ping {
+    0% {
+      box-shadow: 0 0 0 0 rgba(57, 216, 121, 0.45);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 12px rgba(57, 216, 121, 0);
+    }
+  }
+
+  /* typewriter: the full text keeps the layout, the typed copy sits on top */
+  :global(.js) .prompt-full {
+    visibility: hidden;
+  }
+
+  .prompt-typed {
+    position: absolute;
+    inset: 0;
+  }
+
+  :global(html:not(.js)) .prompt-typed {
+    display: none;
+  }
+
+  .prompt-typed:global(.is-typing)::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.15em;
+    background: var(--green-400);
+    animation: caret 0.9s steps(2, jump-none) infinite;
+  }
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .write-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .write-copy {
+      min-width: 0;
+    }
+
+    .write-pixel,
+    .write-copy h3 {
+      max-width: 100%;
+    }
+
+    .write-pixel :global(svg) {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .write-panel {
+      grid-template-columns: minmax(0, 1fr);
+      min-width: 0;
+    }
+
+    .prompt {
+      min-width: 0;
+      min-height: 150px;
+    }
+  }
+</style>
+
+<script>
+  // Types each prompt out once the panel is visible, one card after another.
+  const panel = document.querySelector<HTMLElement>('[data-typewriter]');
+  if (panel) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cards = Array.from(panel.querySelectorAll<HTMLElement>('.prompt'));
+    const fill = (card: HTMLElement) => {
+      const typed = card.querySelector<HTMLElement>('.prompt-typed')!;
+      typed.textContent = card.querySelector('.prompt-full')!.textContent;
+    };
+    if (reduce) cards.forEach(fill);
+    else {
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          cards.forEach((card, i) => {
+            const full = card.querySelector('.prompt-full')!.textContent ?? '';
+            const typed = card.querySelector<HTMLElement>('.prompt-typed')!;
+            let n = 0;
+            setTimeout(() => {
+              typed.classList.add('is-typing');
+              const tick = () => {
+                n += 1 + (Math.random() < 0.3 ? 1 : 0);
+                typed.textContent = full.slice(0, n);
+                if (n < full.length) setTimeout(tick, 22 + Math.random() * 40);
+                else setTimeout(() => typed.classList.remove('is-typing'), 900);
+              };
+              tick();
+            }, 350 + i * 420);
+          });
+        },
+        { threshold: 0.35 },
+      );
+      io.observe(panel);
+    }
+  }
+</script>

@@ -29,8 +29,19 @@
     "creditsPerSecond": 1.2,
     "maxDurationS": 10,
     "kind": "video",
-    "modes": ["cinematic", "genjutsu", "edit"],
+    "modes": ["cinematic"],
     "note": "Open weights. Longest clips in the registry."
+  },
+  {
+    "id": "ltx-25",
+    "name": "LTX-2.5",
+    "vendor": "Lightricks",
+    "open": true,
+    "creditsPerSecond": 1.4,
+    "maxDurationS": 10,
+    "kind": "video",
+    "modes": ["cinematic"],
+    "note": "Open weights (LTX-2.x community licence). Long clips and the $2k bonus category."
   },
   {
     "id": "hunyuan-15",
@@ -40,7 +51,7 @@
     "creditsPerSecond": 1.0,
     "maxDurationS": 8,
     "kind": "video",
-    "modes": ["cinematic", "genjutsu", "edit"],
+    "modes": ["cinematic"],
     "note": "Open weights. Best at faces and small motion."
   },
   {
@@ -55,6 +66,17 @@
     "note": "Open weights. Stills, used as the re-shoot depth source, for Soul images and product stills."
   },
   {
+    "id": "flux-3-klein",
+    "name": "FLUX 3 Image Klein",
+    "vendor": "Black Forest Labs",
+    "open": true,
+    "creditsPerSecond": 0.35,
+    "maxDurationS": 1,
+    "kind": "image",
+    "modes": ["soul"],
+    "note": "Open weights. 5.6B parameters, in the FLUX bonus category."
+  },
+  {
     "id": "qwen-image",
     "name": "Qwen-Image",
     "vendor": "Alibaba",
@@ -66,17 +88,6 @@
     "note": "Open weights. Cheapest still model."
   },
   {
-    "id": "kokoro-tts",
-    "name": "Kokoro TTS",
-    "vendor": "hexgrad",
-    "open": true,
-    "creditsPerSecond": 0.02,
-    "maxDurationS": 30,
-    "kind": "audio",
-    "modes": ["audio"],
-    "note": "Open weights (Apache 2.0). Text to speech, 54 voices."
-  },
-  {
     "id": "chatterbox",
     "name": "Chatterbox",
     "vendor": "Resemble AI",
@@ -85,7 +96,7 @@
     "maxDurationS": 30,
     "kind": "audio",
     "modes": ["audio"],
-    "note": "Open weights (MIT). Voice clone, voice swap and multi-language dubbing."
+    "note": "Open weights (MIT). Voiceover, voice clone, voice swap and multi-language dubbing."
   },
   {
     "id": "audiogen-medium",
@@ -119,5 +130,16 @@
     "kind": "video",
     "modes": ["upscale"],
     "note": "Open weights (MIT). Frame interpolation to 60 fps."
+  },
+  {
+    "id": "depth-anything-v2",
+    "name": "Depth Anything V2",
+    "vendor": "ByteDance",
+    "open": true,
+    "creditsPerSecond": 0.02,
+    "maxDurationS": 1,
+    "kind": "image",
+    "modes": ["depth"],
+    "note": "Open weights. A preprocessor that estimates depth from a still, not a generator."
   }
 ]

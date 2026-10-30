@@ -7,16 +7,18 @@
     "kinemi": "bin/kinemi.mjs"
   },
   "scripts": {
+    "postinstall": "npm --prefix web ci",
     "dev": "next dev",
-    "build": "next build",
+    "dev:web": "npm --prefix web run dev",
+    "build": "npm --prefix web run build && next build",
     "start": "node scripts/start.mjs",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "pretest": "next build",
-    "test": "node --test --test-concurrency=1 tests/api.smoke.mjs tests/studios.smoke.mjs",
+    "typecheck": "tsc --noEmit && npm --prefix web run check",
+    "pretest": "npm run build",
+    "test": "node --test --test-concurrency=1 tests/api.smoke.mjs tests/*.backend.mjs",
     "test:guard": "node --test tests/start.guard.mjs",
-    "pretest:browser": "next build",
-    "test:browser": "node --test tests/home.browser.mjs"
+    "pretest:browser": "npm run build",
+    "test:browser": "node --test --test-concurrency=1 tests/*.browser.mjs"
   },
   "dependencies": {
     "next": "16.4.2",

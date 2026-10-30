@@ -90,7 +90,7 @@
           "id": "score",
           "title": "Score the cut",
           "mode": "audio",
-          "modelId": "kokoro-tts",
+          "modelId": "chatterbox",
           "prompt": "A low string bed that rises under the last line.",
           "durationS": 8,
           "x": 24,

@@ -1,0 +1,64 @@
+---
+// The Impressum required by § 5 DDG, from src/data/legal.ts.
+import Legal from '../../layouts/Legal.astro';
+import { LEGAL, address, operatorName } from '../../data/legal';
+
+const lines = address().split(', ');
+---
+
+<Legal title="Imprint (Impressum)" slug="imprint" kicker="Legal notice" description="Who runs Kinemi: the legal notice under § 5 DDG.">
+  <h2 id="provider">Service provider</h2>
+  <p>Information under § 5 DDG (German Digital Services Act):</p>
+  <address>
+    <strong>{operatorName()}</strong><br />
+    {
+      lines.map((l, i) => (
+        <>
+          {l}
+          {i < lines.length - 1 && <br />}
+        </>
+      ))
+    }
+  </address>
+  {LEGAL.representative && <p>Represented by: {LEGAL.representative}</p>}
+
+  <h2 id="contact">Contact</h2>
+  <p>
+    Email: {/^\[/.test(LEGAL.email) ? LEGAL.email : <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>}<br />
+    Phone: {LEGAL.phone}
+  </p>
+
+  {
+    LEGAL.register && (
+      <>
+        <h2 id="register">Register entry</h2>
+        <p>{LEGAL.register}</p>
+      </>
+    )
+  }
+  {
+    LEGAL.vatId && (
+      <>
+        <h2 id="vat">VAT identification number</h2>
+        <p>Under § 27 a of the German VAT Act: {LEGAL.vatId}</p>
+      </>
+    )
+  }
+  {
+    LEGAL.editor && (
+      <>
+        <h2 id="editor">Responsible for content</h2>
+        <p>Under § 18 (2) MStV: {LEGAL.editor}</p>
+      </>
+    )
+  }
+
+  <h2 id="disputes">Consumer dispute resolution</h2>
+  <p>We are neither obliged nor willing to take part in dispute resolution proceedings before a consumer arbitration board (§ 36 VSBG).</p>
+
+  <h2 id="liability">Links and content</h2>
+  <p>
+    We write the content of these pages with care but can't guarantee it is complete and current at all times. Links to other websites lead to content we don't control; if we learn that a linked page breaks the law, we
+    remove the link.
+  </p>
+</Legal>

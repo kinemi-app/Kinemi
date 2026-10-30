@@ -185,7 +185,7 @@ function addVideoToVideo(
     length,
     batch_size: 1,
     control_video: [parts, 0],
-    control_strength: source.controlStrength,
+    strength: source.controlStrength,
   });
   return { positive: [out, 0], negative: [out, 1], latent: [out, 2] };
 }

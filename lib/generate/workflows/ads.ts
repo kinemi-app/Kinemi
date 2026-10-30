@@ -18,8 +18,11 @@ import { wanVideoGraph } from "./wan";
  * image-to-video alone only moves the pixels it is given.
  */
 
-/** The FLUX.1 Kontext files the compose stage loads; change here when the deployment holds others. */
-const KONTEXT_UNET = "flux1-kontext-dev.safetensors";
+/**
+ * The FLUX.1 Kontext files the compose stage loads, as Comfy Cloud names them; change here when the
+ * deployment holds others. The fp8_scaled UNet is Cloud's cheaper copy of the same weights.
+ */
+const KONTEXT_UNET = "flux1-dev-kontext_fp8_scaled.safetensors";
 const KONTEXT_CLIP_L = "clip_l.safetensors";
 const KONTEXT_CLIP_T5 = "t5xxl_fp16.safetensors";
 const KONTEXT_VAE = "ae.safetensors";

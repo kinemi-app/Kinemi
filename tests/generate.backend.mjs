@@ -126,7 +126,7 @@ test("demo mode stores nothing, returns the demo name and still reports audio", 
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         mode: "audio",
-        modelId: "kokoro-tts",
+        modelId: "chatterbox",
         prompt: "a demo line",
         durationS: 1,
       }),
@@ -136,6 +136,28 @@ test("demo mode stores nothing, returns the demo name and still reports audio", 
     const job = await waitForJob(jobId, demo.base);
     assert.equal(job.result?.kind, "audio");
     assert.match(job.result?.url ?? "", /^data:audio\/wav;base64,/);
+  } finally {
+    demo.stop();
+  }
+});
+
+test("a caption too long for two lines says it was cut instead of losing its end", async () => {
+  const demo = await startServer();
+  try {
+    // three 30-character words: two lines cannot hold them, and the frame has room for two
+    const words = ["a".repeat(30), "b".repeat(30), "c".repeat(30)];
+    const submitted = await fetch(`${demo.base}/api/generate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ mode: "soul", modelId: "flux-2-dev", prompt: words.join(" "), durationS: 1 }),
+    });
+    assert.equal(submitted.status, 202);
+    const { jobId } = await submitted.json();
+    const job = await waitForJob(jobId, demo.base);
+    const url = String(job.result?.url ?? "");
+    const svg = decodeURIComponent(url.slice(url.indexOf(",") + 1));
+    assert.match(svg, /…/, "the second caption line ends in an ellipsis when a third was dropped");
+    assert.ok(!svg.includes(words[2]), "the dropped word is not kept");
   } finally {
     demo.stop();
   }
@@ -198,8 +220,34 @@ test("re-shoot loads the still into an image-to-image graph", async () => {
   assert.match(job.result.url, /\.png/);
   const graph = lastGraph();
   assert.equal(nodeOf(graph, "LoadImage")?.inputs.image, imageName);
-  assert.ok(nodeOf(graph, "VAEEncode"), "the still should be encoded as the sampler's latent");
+  assert.equal(nodeOf(graph, "UNETLoader")?.inputs.unet_name, "flux2_dev_fp8mixed.safetensors", "FLUX.2 loads split weights");
+  assert.equal(nodeOf(graph, "CheckpointLoaderSimple"), undefined, "Comfy Cloud has no single-file FLUX.2 checkpoint");
+  const encodeId = Object.keys(graph).find((id) => graph[id].class_type === "VAEEncode");
+  assert.deepEqual(
+    nodeOf(graph, "ReferenceLatent")?.inputs.latent,
+    [encodeId, 0],
+    "the encoded still should steer the render as FLUX.2's reference latent",
+  );
   assert.ok(nodeOf(graph, "SaveImage"), "the still should be saved as an image");
+});
+
+test("re-shoot on Qwen-Image samples from the encoded still at a reduced denoise", async () => {
+  const imageName = await upload(PNG, "source.png", "image/png");
+  const job = await submit({
+    mode: "reshoot",
+    modelId: "qwen-image",
+    prompt: "re-shoot from a low angle",
+    durationS: 1,
+    params: { imageName },
+  });
+
+  assert.equal(job.result.kind, "image");
+  const graph = lastGraph();
+  assert.equal(nodeOf(graph, "CLIPLoader")?.inputs.type, "qwen_image", "the text encoder should load as Qwen-Image's");
+  const encodeId = Object.keys(graph).find((id) => graph[id].class_type === "VAEEncode");
+  const sampler = nodeOf(graph, "KSampler");
+  assert.deepEqual(sampler?.inputs.latent_image, [encodeId, 0], "the still should be the sampler's latent");
+  assert.ok(sampler.inputs.denoise < 1, "image-to-image keeps part of the source");
 });
 
 test("re-shoot reports video when the picked model outputs video", async () => {
@@ -226,7 +274,8 @@ test("soul renders from text when no source photo is given", async () => {
 
   assert.equal(job.result.kind, "image");
   const graph = lastGraph();
-  assert.ok(nodeOf(graph, "EmptyLatentImage"), "without a photo the graph starts from an empty latent");
+  assert.ok(nodeOf(graph, "EmptySD3LatentImage"), "without a photo the graph starts from Qwen-Image's empty latent");
+  assert.equal(nodeOf(graph, "LoadImage"), undefined, "without a photo nothing is loaded");
   assert.ok(nodeOf(graph, "SaveImage"));
 });
 
@@ -256,10 +305,10 @@ test("genjutsu and edit send the source clip to the video-to-video graph", async
   });
   assert.equal(edit.result.kind, "video");
   graph = lastGraph();
-  assert.equal(nodeOf(graph, "WanVaceToVideo")?.inputs.control_strength, 0.7);
+  assert.equal(nodeOf(graph, "WanVaceToVideo")?.inputs.strength, 0.7);
 });
 
-test("a model without a graph answers 502 with the graph name", async () => {
+test("a model that does not serve the mode answers 400 with the mode name", async () => {
   const response = await fetch(`${BASE}/api/generate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -272,9 +321,9 @@ test("a model without a graph answers 502 with the graph name", async () => {
     }),
   });
 
-  assert.equal(response.status, 502);
+  assert.equal(response.status, 400);
   const body = await response.json();
-  assert.match(body.error, /no edit graph for model "ltx-2"/);
+  assert.match(body.error, /model "ltx-2" does not serve mode "edit"/);
 });
 
 test("a graph that needs an upload answers 502 before a job is made", async () => {

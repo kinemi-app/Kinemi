@@ -1,0 +1,110 @@
+---
+// A minimal desktop browser window around a screenshot slot.
+interface Props {
+  class?: string;
+  url?: string;
+}
+const { class: className, url = 'Kinemi · Studios' } = Astro.props;
+---
+
+<div class:list={['browser', className]}>
+  <div class="browser-bar" aria-hidden="true">
+    <span class="browser-dots"><i></i><i></i><i></i></span>
+    <span class="browser-url">
+      <svg viewBox="0 0 12 12" width="10" height="10"><path d="M3.5 5.5V4a2.5 2.5 0 015 0v1.5M2.5 5.5h7v5h-7z" fill="none" stroke="currentColor" stroke-width="1.2"></path></svg>
+      {url}
+    </span>
+    <span class="browser-tools"><i></i><i></i></span>
+  </div>
+  <div class="browser-view">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .browser {
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(10px, 1.2vw, 16px);
+    background: #0a131d;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 50px 120px -40px rgba(0, 0, 0, 0.9),
+      0 30px 80px -50px rgba(57, 216, 121, 0.35);
+  }
+
+  .browser-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: clamp(26px, 2.6vw, 38px);
+    padding: 0 14px;
+    background: linear-gradient(180deg, #131f2c, #0e1823);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .browser-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .browser-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #2a3744;
+  }
+
+  .browser-dots i:first-child {
+    background: #ff5f57;
+  }
+
+  .browser-dots i:nth-child(2) {
+    background: #febc2e;
+  }
+
+  .browser-dots i:nth-child(3) {
+    background: var(--green-400);
+  }
+
+  .browser-url {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 14px;
+    min-width: min(36vw, 320px);
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--fg-2);
+    font-size: 11px;
+  }
+
+  .browser-tools {
+    justify-self: end;
+    display: flex;
+    gap: 8px;
+  }
+
+  .browser-tools i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1.5px solid #2a3744;
+  }
+
+  .browser-view {
+    position: relative;
+  }
+
+  @media (max-width: 600px) {
+    .browser-url {
+      min-width: 0;
+      padding: 3px 10px;
+    }
+
+    .browser-tools {
+      display: none;
+    }
+  }
+</style>

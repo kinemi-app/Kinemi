@@ -1,0 +1,498 @@
+/* ------------------------------------------------------------------
+   The camera rig pad: a top-view plan, a crane rail and a head pad, with the move stack under them.
+   The plan's numbers (ring centre 50,41, radius 23, camera rest 50,64) match RING and CAM in
+   tools/camera-controls.tsx. Keys in the plan are sized and placed in container units, so they scale
+   with the plan and can never crowd each other, the camera or the subject.
+------------------------------------------------------------------- */
+.rig {
+  display: grid;
+  gap: 10px;
+}
+
+.rp-pads {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px 8px;
+}
+
+.rp-cell {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.rp-cell:nth-child(1) {
+  flex: 1 1 176px;
+  max-width: 200px;
+}
+
+.rp-cell:nth-child(2) {
+  flex: 0 0 44px;
+}
+
+.rp-cell:nth-child(3) {
+  flex: 0 0 116px;
+}
+
+.rp-cap {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fg-3);
+}
+
+/* the three panels share one dotted-grid surface */
+.rp-plan,
+.rp-crane,
+.rp-head {
+  position: relative;
+  border-radius: 14px;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 12px 12px,
+    linear-gradient(180deg, rgba(9, 19, 30, 0.85), rgba(4, 9, 15, 0.7));
+  box-shadow:
+    inset 0 0 0 1px var(--stroke-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* the crane and head panels open as the rig mounts, reusing the menu's rise and fade; the rig
+   always renders them, so there is no close state to animate */
+@media (prefers-reduced-motion: no-preference) {
+  .rp-crane,
+  .rp-head {
+    animation: menu-in 0.22s var(--ease-out);
+  }
+}
+
+.rp-plan {
+  width: 100%;
+  aspect-ratio: 1;
+  container-type: inline-size;
+}
+
+.rp-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.rp-halo {
+  fill: rgba(57, 216, 121, 0.07);
+}
+
+.rp-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 0.7;
+  stroke-dasharray: 1.6 2.2;
+}
+
+.rp-beam {
+  fill: url(#rp-beam-fill);
+  stroke: rgba(57, 216, 121, 0.35);
+  stroke-width: 0.4;
+  stroke-dasharray: 1.5 1.5;
+  transition: d 0.45s var(--ease-out);
+  transform-box: view-box;
+  transform-origin: 50px 64px;
+}
+
+.rp-beam-near {
+  stop-color: var(--green-400);
+  stop-opacity: 0.4;
+}
+
+.rp-beam-far {
+  stop-color: var(--green-400);
+  stop-opacity: 0.03;
+}
+
+.rp-cam-body {
+  fill: #dfe7ee;
+}
+
+.rp-cam-lens {
+  fill: var(--green-400);
+}
+
+.rp-subject-body {
+  fill: #c9a93a;
+}
+
+.rp-subject-head {
+  fill: #f2d45c;
+}
+
+/* the sightline and the camera move together, about the camera's resting spot unless it orbits */
+.rp-move {
+  transform-box: view-box;
+  transform-origin: 50px 64px;
+}
+
+/* keys: hover and focus fade the colour, surface and ring over 0.2 s; a press dips the key to
+   94% over 0.15 s */
+.rig .pad-key {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: var(--fg-2);
+  background: linear-gradient(180deg, rgba(27, 47, 68, 0.96), rgba(14, 29, 44, 0.96));
+  box-shadow:
+    inset 0 0 0 1px var(--stroke-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transition:
+    color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s,
+    scale 0.15s var(--ease-out);
+}
+
+.rig .pad-key > span {
+  display: grid;
+  place-items: center;
+}
+
+.rig .pad-key:hover,
+.rig .pad-key:focus-visible {
+  color: var(--fg);
+  background: linear-gradient(180deg, rgba(35, 62, 90, 0.98), rgba(20, 40, 60, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(57, 216, 121, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.rig .pad-key:focus-visible {
+  outline: 2px solid var(--green-300);
+  outline-offset: 2px;
+}
+
+.rig .pad-key:active {
+  scale: 0.94;
+}
+
+.rig .pad-key.is-on {
+  color: #04140b;
+  background: linear-gradient(180deg, var(--green-300), var(--green-400));
+  box-shadow:
+    0 0 0 3px rgba(57, 216, 121, 0.16),
+    0 0 18px -4px rgba(57, 216, 121, 0.8);
+}
+
+.rp-plan .pad-key {
+  position: absolute;
+  translate: -50% -50%;
+  width: 14cqw;
+  height: 14cqw;
+  border-radius: 6cqw;
+}
+
+/* the order badge on a stacked move: a dark chip at the key's top-right corner */
+.rig .pad-n {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--green-100);
+  background: #0b1622;
+  box-shadow: inset 0 0 0 1px var(--green-400);
+}
+
+/* crane: a side view, the camera rides a rail between the up and down keys */
+.rp-crane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 44px;
+  min-height: 176px;
+  padding: 8px 0;
+}
+
+.rp-rail {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+
+.rp-rail::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 50%;
+  border-left: 1.5px dashed rgba(255, 255, 255, 0.22);
+  translate: -50% 0;
+}
+
+.rp-lift-cam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 10px;
+  border-radius: 2px;
+  background: #dfe7ee;
+  translate: -50% -50%;
+  box-shadow: 0 0 0 3px rgba(4, 9, 15, 0.9);
+}
+
+.rp-lift-cam::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 5px;
+  height: 6px;
+  border-radius: 0 2px 2px 0;
+  background: var(--green-400);
+  translate: 0 -50%;
+}
+
+/* head: pan, tilt, zoom and roll around the lens */
+.rp-head {
+  display: grid;
+  grid-template-columns: repeat(3, 28px);
+  grid-auto-rows: 28px;
+  gap: 6px;
+  justify-content: center;
+  align-content: center;
+  align-self: center;
+  width: 116px;
+  min-height: 116px;
+}
+
+.rp-lens {
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--green-300);
+  background: rgba(57, 216, 121, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(57, 216, 121, 0.28);
+}
+
+/* the stack of chosen moves under the pads */
+.rig-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.rig-none {
+  padding: 0 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* the rig plays the move under the pointer */
+@media (prefers-reduced-motion: no-preference) {
+  .rig[data-play] :is(.rp-move, .rp-lift-cam, .rp-lens, .rp-beam) {
+    animation: 1.5s var(--ease-in-out) infinite alternate both;
+  }
+
+  .rig[data-play='in'] .rp-move {
+    animation-name: rp-in;
+  }
+
+  .rig[data-play='out'] .rp-move {
+    animation-name: rp-out;
+  }
+
+  .rig[data-play='left'] .rp-move {
+    animation-name: rp-left;
+  }
+
+  .rig[data-play='right'] .rp-move {
+    animation-name: rp-right;
+  }
+
+  .rig[data-play^='orbit'] .rp-move {
+    transform-origin: 50px 41px;
+  }
+
+  .rig[data-play='orbit-l'] .rp-move {
+    animation-name: rp-orbit-l;
+  }
+
+  .rig[data-play='orbit-r'] .rp-move {
+    animation-name: rp-orbit-r;
+  }
+
+  .rig[data-play='pan-l'] .rp-move {
+    animation-name: rp-pan-l;
+  }
+
+  .rig[data-play='pan-r'] .rp-move {
+    animation-name: rp-pan-r;
+  }
+
+  .rig[data-play='up'] .rp-lift-cam {
+    animation-name: rp-crane-up;
+  }
+
+  .rig[data-play='down'] .rp-lift-cam {
+    animation-name: rp-crane-down;
+  }
+
+  .rig[data-play='tilt-u'] .rp-lift-cam {
+    animation-name: rp-tilt-u;
+  }
+
+  .rig[data-play='tilt-d'] .rp-lift-cam {
+    animation-name: rp-tilt-d;
+  }
+
+  .rig[data-play='zoom-in'] .rp-lens {
+    animation-name: rp-lens-in;
+  }
+
+  .rig[data-play='zoom-out'] .rp-lens {
+    animation-name: rp-lens-out;
+  }
+
+  .rig[data-play='zoom-in'] .rp-beam {
+    animation-name: rp-beam-in;
+  }
+
+  .rig[data-play='zoom-out'] .rp-beam {
+    animation-name: rp-beam-out;
+  }
+
+  .rig[data-play='roll'] .rp-lens {
+    animation-name: rp-roll;
+  }
+
+  .rig[data-play='shake'] :is(.rp-move, .rp-lens) {
+    animation: rp-shake 0.36s steps(3) infinite;
+  }
+}
+
+@keyframes rp-in {
+  to {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes rp-out {
+  to {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes rp-left {
+  to {
+    transform: translateX(-16px);
+  }
+}
+
+@keyframes rp-right {
+  to {
+    transform: translateX(16px);
+  }
+}
+
+@keyframes rp-orbit-l {
+  to {
+    transform: rotate(50deg);
+  }
+}
+
+@keyframes rp-orbit-r {
+  to {
+    transform: rotate(-50deg);
+  }
+}
+
+@keyframes rp-pan-l {
+  to {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes rp-pan-r {
+  to {
+    transform: rotate(24deg);
+  }
+}
+
+@keyframes rp-crane-up {
+  to {
+    top: 14%;
+  }
+}
+
+@keyframes rp-crane-down {
+  to {
+    top: 86%;
+  }
+}
+
+@keyframes rp-tilt-u {
+  to {
+    transform: rotate(-22deg);
+  }
+}
+
+@keyframes rp-tilt-d {
+  to {
+    transform: rotate(22deg);
+  }
+}
+
+@keyframes rp-lens-in {
+  to {
+    transform: scale(1.5);
+  }
+}
+
+@keyframes rp-lens-out {
+  to {
+    transform: scale(0.6);
+  }
+}
+
+@keyframes rp-beam-in {
+  to {
+    transform: scaleX(0.4);
+  }
+}
+
+@keyframes rp-beam-out {
+  to {
+    transform: scaleX(1.6);
+  }
+}
+
+@keyframes rp-roll {
+  to {
+    transform: rotate(35deg);
+  }
+}
+
+@keyframes rp-shake {
+  33% {
+    transform: translate(1px, -1px);
+  }
+
+  66% {
+    transform: translate(-1px, 1px);
+  }
+}

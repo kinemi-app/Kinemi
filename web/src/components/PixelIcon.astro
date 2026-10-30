@@ -1,0 +1,20 @@
+---
+// A 9 x 9 pixel icon: one merged path per colour, so 16 icons stay light in the DOM.
+import { iconCells, ICON_COLORS, type IconName } from '../lib/pixel-icons';
+import { toPath } from '../lib/pixel-font';
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+const byColor = new Map<string, Array<{ x: number; y: number; g: number }>>();
+for (const c of iconCells(name)) {
+  if (!byColor.has(c.c)) byColor.set(c.c, []);
+  byColor.get(c.c)!.push({ x: c.x, y: c.y, g: 0 });
+}
+---
+
+<svg class:list={['px-icon', className]} viewBox="0 0 9 9" width="36" height="36" shape-rendering="crispEdges" aria-hidden="true">
+  {[...byColor].map(([c, cells], i) => <path d={toPath(cells)} fill={ICON_COLORS[c]} style={`--i:${i}`} />)}
+</svg>

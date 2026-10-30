@@ -1,0 +1,52 @@
+---
+// Workbench for the placeholder posters: every scene, a few seeds, at card and drawer sizes.
+import '../styles/global.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Posters lab</title>
+    <style>
+      body { margin: 0; padding: 24px; background: #04090f; color: #a7b4c0; font: 12px ui-monospace, monospace; }
+      .grid { display: grid; grid-template-columns: repeat(5, 260px); gap: 14px; }
+      figure { margin: 0; display: grid; gap: 6px; }
+      canvas { width: 260px; height: 146px; border-radius: 10px; image-rendering: pixelated; background: #0d1b2a; }
+      canvas.tall { height: 325px; }
+      canvas.sq { height: 260px; }
+    </style>
+  </head>
+  <body>
+    <div class="grid" id="grid"></div>
+    <script>
+      import { renderLow } from '../app/lib/poster';
+      const grid = document.getElementById('grid')!;
+      const scenes = ['neon', 'desert', 'ocean', 'forest', 'mountain', 'portrait', 'product', 'fashion', 'space', 'interior', 'previz', 'audio'];
+      const extra: Array<{ scene: string; kind?: string; palette?: string[]; panels?: number; cls?: string }> = [
+        { scene: 'desert', kind: 'palette', palette: ['#FCC14A', '#F8723D', '#D0515B', '#4D266E', '#060C25'] },
+        { scene: 'neon', kind: 'board', panels: 4 },
+        { scene: 'fashion', kind: 'board', panels: 6, cls: 'sq' },
+        { scene: 'portrait', cls: 'tall' },
+        { scene: 'fashion', cls: 'tall' },
+        { scene: 'product', cls: 'tall' },
+      ];
+      const items = [...scenes.flatMap((s) => [1, 2].map((seed) => ({ scene: s, seed: seed * 7919 + s.length }))), ...extra.map((e, i) => ({ ...e, seed: 400 + i }))];
+      for (const it of items as Array<{ scene: string; seed: number; kind?: string; palette?: string[]; panels?: number; cls?: string }>) {
+        const fig = document.createElement('figure');
+        const c = document.createElement('canvas');
+        if (it.cls) c.className = it.cls;
+        fig.append(c, Object.assign(document.createElement('figcaption'), { textContent: `${it.kind ?? ''} ${it.scene} ${it.seed}` }));
+        grid.append(fig);
+        const r = c.getBoundingClientRect();
+        const dpr = 2;
+        c.width = r.width * dpr;
+        c.height = r.height * dpr;
+        const px = 3 * dpr;
+        const low = renderLow({ scene: it.scene, seed: it.seed, kind: it.kind, palette: it.palette, panels: it.panels }, Math.ceil(c.width / px), Math.ceil(c.height / px));
+        const ctx = c.getContext('2d')!;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(low, 0, 0, low.width * px, low.height * px);
+      }
+    </script>
+  </body>
+</html>

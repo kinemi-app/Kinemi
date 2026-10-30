@@ -1,0 +1,32 @@
+{
+  "name": "kinemi-web",
+  "private": true,
+  "type": "module",
+  "description": "Kinemi landing site and studio dashboard",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "start": "astro build && node server/local.mjs",
+    "serve": "node server/local.mjs",
+    "bridge": "node server/local.mjs --api-only --port 4322 --allow-origin http://localhost:4321,http://127.0.0.1:4321",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/preact": "6.1.0",
+    "@preact/signals": "^2.11.3",
+    "@supabase/supabase-js": "2.117.3",
+    "astro": "^7.4.1",
+    "preact": "^10.29.8",
+    "three": "^0.186.1"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.186.0",
+    "typescript": "^6.0.3"
+  }
+}

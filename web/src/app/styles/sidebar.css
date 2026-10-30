@@ -1,0 +1,100 @@
+/* Sidebar chat rows: rename in place, hold-to-delete. The Director card's chevron. */
+
+.chat-actions {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.chat-item:hover .chat-actions,
+.chat-item:focus-within .chat-actions,
+.chat-item.is-holding .chat-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chat-item:hover .side-link,
+.chat-item:focus-within .side-link {
+  padding-right: 64px;
+}
+
+.chat-act {
+  position: relative;
+}
+
+.chat-del {
+  color: #ff9aa4;
+}
+
+.chat-del[data-tip]:hover::after,
+.chat-del[data-tip]:focus-visible::after {
+  left: auto;
+  right: 0;
+  translate: 0 0;
+}
+
+.chat-del:hover,
+.chat-del:focus-visible {
+  color: #fff;
+  background: rgba(255, 90, 106, 0.16);
+}
+
+/* the red that fills the button bottom to top while the hold lasts */
+.chat-del .hold-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #e5484d;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.15s ease-out;
+}
+
+.chat-item.is-holding .chat-del .hold-fill {
+  transform: scaleY(1);
+  transition: transform 1s linear;
+}
+
+.chat-del > :not(.hold-fill) {
+  position: relative;
+}
+
+.chat-item.is-editing .side-link {
+  color: var(--fg);
+  background: rgba(57, 216, 121, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(57, 216, 121, 0.45);
+}
+
+.chat-rename {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+}
+
+.side-warn {
+  color: #ffcf8a;
+}
+
+.user-chevron {
+  display: inline-flex;
+  transition: transform 0.2s;
+}
+
+.user-card[aria-expanded='true'] .user-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-item.is-holding .chat-del .hold-fill {
+    transition-timing-function: steps(4);
+  }
+}

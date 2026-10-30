@@ -1,0 +1,12 @@
+---
+import Page from '../layouts/Page.astro';
+import AuthArt from '../components/AuthArt.astro';
+import AuthForms from '../app/auth/AuthForms';
+---
+
+<Page title="Create your account" description="Create a Kinemi account: your studio, saved to your account and on every device.">
+  <div class="auth">
+    <AuthForms client:load mode="signup" />
+    <AuthArt word="SCENE 1" take="SLATE 1A" line="Build shots with real camera language, render on open models, keep every take." />
+  </div>
+</Page>

@@ -1,0 +1,336 @@
+---
+// Pricing: how Kinemi runs. A CSS-only radio toggle moves the highlight between plans
+// (and on phones, picks which plan is shown).
+import PixelText from './PixelText.astro';
+import { PLANS, ROWS } from '../data/access';
+import { SITE } from '../data/site';
+---
+
+<section class="access" id="pricing" data-spy-target aria-labelledby="pricing-title">
+  <div class="container">
+    <div class="access-card" data-reveal>
+      <div class="access-mark" aria-hidden="true">
+        <PixelText text="PRICING" decorative stops={['rgba(255,255,255,0.10)', 'rgba(255,255,255,0.02)']} />
+      </div>
+
+      <header class="access-head">
+        <h2 id="pricing-title">Bring your own key,<br />or your own GPU</h2>
+        <fieldset class="toggle">
+          <legend class="sr-only">Highlight a plan</legend>
+          <span class="toggle-thumb" aria-hidden="true"></span>
+          {
+            PLANS.map((p) => (
+              <label>
+                <input type="radio" name="plan" value={p.id} checked={p.id === 'byok'} />
+                <span>{p.id === 'byok' ? 'Cloud' : 'Local'}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+      </header>
+
+      <div class="access-table">
+        <span class="col-band" aria-hidden="true"></span>
+        <table>
+          <caption class="sr-only">What each way of running Kinemi includes</caption>
+          <thead>
+            <tr>
+              <td></td>
+              {
+                PLANS.map((p) => (
+                  <th scope="col" class={`c-${p.id}`}>
+                    <span class="plan-name">{p.name}</span>
+                    <span class="plan-tag mono">{p.tag}</span>
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ROWS.map((row) => (
+                <tr>
+                  <th scope="row">{row.label}</th>
+                  {PLANS.map((p) => (
+                    <td class={`c-${p.id}`}>
+                      <span class="cell-value">{row.cells[p.id][0]}</span>
+                      <span class="cell-note">{row.cells[p.id][1]}</span>
+                    </td>
+                  ))}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="access-foot">
+        <p>Every flow shows runtime and credits before you press generate. Your key, your GPU, your weights: no lock-in.</p>
+        <a href={SITE.academyUrl} class="access-link">
+          How to connect Comfy, in the Academy
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<style>
+  .access {
+    padding: clamp(40px, 5vw, 80px) 0 clamp(80px, 9vw, 140px);
+  }
+
+  .access-card {
+    --col: 0;
+    --label-w: 30%;
+    --col-w: 35%;
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 4.4vw, 64px) clamp(20px, 4.4vw, 64px) clamp(24px, 3vw, 40px);
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(70% 80% at 85% 110%, rgba(57, 216, 121, 0.55), transparent 65%),
+      radial-gradient(60% 70% at 10% 120%, rgba(46, 230, 196, 0.28), transparent 70%),
+      linear-gradient(175deg, #0b1a29 0%, #0b2b2c 40%, #0d5a3d 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 231, 169, 0.2),
+      0 60px 140px -60px rgba(57, 216, 121, 0.5);
+    isolation: isolate;
+  }
+
+  .access-card:has(input[value='byok']:checked) {
+    --col: 0;
+  }
+
+  .access-card:has(input[value='local']:checked) {
+    --col: 1;
+  }
+
+  .access-mark {
+    position: absolute;
+    z-index: -1;
+    top: -2.2%;
+    left: 2.5%;
+    right: 2.5%;
+  }
+
+  .access-mark :global(svg) {
+    width: 100%;
+  }
+
+  .access-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(40px, 9vw, 120px);
+    margin-bottom: clamp(32px, 4vw, 52px);
+  }
+
+  .access-head h2 {
+    font-size: clamp(30px, 3.4vw, 48px);
+  }
+
+  /* ---------- toggle ---------- */
+  .toggle {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    flex: none;
+    margin: 0;
+    padding: 4px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(4, 9, 15, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  }
+
+  .toggle label {
+    position: relative;
+    z-index: 1;
+    display: block;
+    cursor: pointer;
+  }
+
+  .toggle input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .toggle span {
+    display: block;
+    padding: 8px 18px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(242, 247, 244, 0.75);
+    transition: color 0.35s;
+  }
+
+  .toggle input:checked + span {
+    color: var(--ink-1);
+  }
+
+  .toggle input:focus-visible + span {
+    outline: 2px solid var(--green-400);
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / 2);
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
+    transform: translateX(calc(var(--col) * 100%));
+    transition: transform 0.55s var(--ease-spring);
+  }
+
+  /* ---------- table ---------- */
+  .access-table {
+    position: relative;
+  }
+
+  table {
+    position: relative;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .col-band {
+    position: absolute;
+    top: -14px;
+    bottom: -8px;
+    left: var(--label-w);
+    width: var(--col-w);
+    border-radius: var(--r-md);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+    transform: translateX(calc(var(--col) * 100%));
+    transition: transform 0.6s var(--ease-spring);
+  }
+
+  thead th {
+    padding: 0 20px 22px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+  thead td {
+    width: var(--label-w);
+  }
+
+  .plan-name {
+    display: block;
+    font-size: clamp(16px, 1.4vw, 19px);
+    font-weight: 500;
+  }
+
+  .plan-tag {
+    display: block;
+    margin-top: 6px;
+    color: rgba(242, 247, 244, 0.6);
+    font-size: 10px;
+  }
+
+  tbody th {
+    padding: 22px 20px 22px 0;
+    text-align: left;
+    font-weight: 400;
+    font-size: 15px;
+    color: rgba(242, 247, 244, 0.85);
+    vertical-align: top;
+  }
+
+  tbody td {
+    padding: 22px 20px;
+    vertical-align: top;
+  }
+
+  tbody tr {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cell-value {
+    display: block;
+    font-size: clamp(20px, 1.9vw, 26px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .cell-note {
+    display: block;
+    margin-top: 8px;
+    max-width: 24ch;
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(242, 247, 244, 0.68);
+  }
+
+  td,
+  thead th {
+    transition: opacity 0.4s;
+  }
+
+  .access-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-top: clamp(28px, 3vw, 40px);
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    color: rgba(242, 247, 244, 0.75);
+  }
+
+  .access-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    transition: gap 0.4s var(--ease-out);
+  }
+
+  .access-link:hover {
+    gap: 12px;
+  }
+
+  /* phones: the toggle picks the plan, one column at a time */
+  @media (max-width: 760px) {
+    .access-card {
+      --label-w: 36%;
+      --col-w: 64%;
+    }
+
+    .access-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .col-band {
+      transform: none;
+      transition: none;
+    }
+
+    .access-card:has(input[value='byok']:checked) .c-local,
+    .access-card:has(input[value='local']:checked) .c-byok {
+      display: none;
+    }
+
+    tbody th {
+      font-size: 14px;
+    }
+  }
+</style>

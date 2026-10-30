@@ -13,6 +13,7 @@ export const MODES: Mode[] = [
   "ads",
   "fashion",
   "upscale",
+  "depth",
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {

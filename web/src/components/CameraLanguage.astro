@@ -1,0 +1,148 @@
+---
+import PixelText from './PixelText.astro';
+import Phone from './Phone.astro';
+import Shot from './Shot.astro';
+import Button from './Button.astro';
+import { toolUrl } from '../data/site';
+---
+
+<section class="feature">
+  <div class="container feature-grid">
+    <div class="feature-visual" data-reveal>
+      <div class="feature-card">
+        <span class="feature-card-grid" aria-hidden="true"></span>
+      </div>
+      <div class="feature-phone">
+        <Phone>
+          <Shot name="phone-cinematic" fill sizes="(max-width: 760px) 60vw, 22vw" />
+        </Phone>
+      </div>
+    </div>
+
+    <div class="feature-copy">
+      <h2 class="feature-pixel" data-reveal="wipe">
+        <PixelText text={'CAMERA\nLANGUAGE'} lineGap={3} stops={['#d6fbe6', '#7be7a9', '#2fc56d']} label="Camera language" />
+      </h2>
+      <h3 data-reveal style="--d:80">Kinemi, everything you need for your shot</h3>
+      <p class="lede" data-reveal style="--d:140">
+        Build one shot the way a cinematographer would: stack camera moves, pick a body, lens and aperture, set the look, then render
+        the frames. Every move in the library comes with the prompt it writes.
+      </p>
+      <div data-reveal style="--d:200">
+        <Button href={toolUrl('cinematic')}>Open Cinematic</Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .feature {
+    padding: clamp(72px, 8vw, 120px) 0;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(40px, 7vw, 120px);
+  }
+
+  .feature-visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-width: 560px;
+    width: 100%;
+    justify-self: center;
+  }
+
+  .feature-card {
+    position: absolute;
+    inset: 18% 0 0 0;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background:
+      radial-gradient(90% 70% at 50% 100%, rgba(57, 216, 121, 0.45), transparent 70%),
+      linear-gradient(180deg, #0d1b2a 0%, #0c3a2f 55%, #11704a 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 40px 100px -40px rgba(57, 216, 121, 0.45);
+  }
+
+  .feature-card-grid {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 28px 28px;
+    mask-image: linear-gradient(180deg, transparent, #000 70%);
+  }
+
+  .feature-phone {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 50%;
+    translate: -50% 0;
+    /* the phone is cut off by the bottom of the card, like it rises out of it */
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0 0 var(--r-lg) var(--r-lg);
+  }
+
+  .feature-phone :global(.phone) {
+    transform: translateY(var(--rise, 0px));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .feature-phone :global(.phone) {
+        animation: phone-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 50%;
+      }
+
+      @keyframes phone-rise {
+        from {
+          transform: translateY(18%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  .feature-copy {
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+    max-width: 480px;
+  }
+
+  .feature-pixel {
+    width: min(100%, 420px);
+    margin-bottom: 18px;
+  }
+
+  .feature-pixel :global(svg) {
+    width: 100%;
+  }
+
+  .feature-copy h3 {
+    font-size: clamp(26px, 2.4vw, 34px);
+  }
+
+  .feature-copy .lede {
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 860px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .feature-visual {
+      max-width: 440px;
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+// Pages outside the studio: sign in, sign up, the policies, 404. The landing page's look, a quieter frame.
+import Base from './Base.astro';
+import Logo from '../components/Logo.astro';
+import { POLICIES, policyUrl, operatorName, unfilled } from '../data/legal';
+import { SITE } from '../data/site';
+import { CLOUD, GUESTS } from '../app/deploy';
+import '../styles/page.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** keep the page out of search results */
+  noindex?: boolean;
+  /** the policy this page shows, to mark it in the footer */
+  current?: string;
+}
+const { title, description, noindex = false, current } = Astro.props;
+const base = import.meta.env.BASE_URL ?? '/';
+const year = new Date().getFullYear();
+const operator = unfilled().includes('operator') ? 'Kinemi' : operatorName();
+const studio = CLOUD && !GUESTS ? `${base}signin/` : SITE.appUrl;
+---
+
+<Base title={`${title} · Kinemi`} description={description ?? SITE.description}>
+  {noindex && <meta slot="head" name="robots" content="noindex" />}
+  <div class="pg">
+    <header class="pg-top">
+      <a href={base} class="pg-logo" aria-label="Kinemi, home"><Logo /></a>
+      <nav class="pg-nav" aria-label="Main">
+        <a href={`${base}#studios`} class="pg-hide-sm">Studios</a>
+        <a href={SITE.academyUrl} class="pg-hide-sm">Academy</a>
+        {CLOUD && <a href={`${base}signin/`}>Sign in</a>}
+        <a href={studio} class="pg-btn pg-btn-ghost pg-btn-sm">Open the studio</a>
+      </nav>
+    </header>
+    <main id="main" class="pg-main">
+      <slot />
+    </main>
+    <footer class="pg-foot">
+      <div class="pg-foot-in">
+        <span>© {year} {operator}</span>
+        <nav aria-label="Legal" data-policies>
+          {
+            POLICIES.map((p) => (
+              <a href={policyUrl(p.slug)} aria-current={current === p.slug ? 'page' : undefined}>
+                {p.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </footer>
+  </div>
+</Base>
+
+<script>
+  import { showLocalPolicies } from '../data/legal';
+  showLocalPolicies();
+</script>

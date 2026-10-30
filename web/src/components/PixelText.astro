@@ -1,0 +1,68 @@
+---
+// Renders text in the Kinemi pixel alphabet as inline SVG.
+// mode="path": one merged path (static, smallest).
+// mode="cells": one <rect> per pixel, for pixel-by-pixel animation.
+import { layout, toPath, type LayoutOptions } from '../lib/pixel-font';
+import { uid } from '../lib/uid';
+
+interface Props extends LayoutOptions {
+  text: string;
+  mode?: 'path' | 'cells';
+  /** gradient stops, top to bottom */
+  stops?: string[];
+  class?: string;
+  /** visible label for assistive tech; defaults to the text */
+  label?: string;
+  /** decorative: hide from assistive tech */
+  decorative?: boolean;
+}
+
+const {
+  text,
+  mode = 'path',
+  stops = ['#e9fff2', '#39d879'],
+  class: className,
+  label,
+  decorative = false,
+  ...opts
+} = Astro.props;
+
+const { cells, width, height } = layout(text, opts);
+const id = uid('px');
+// deterministic 0..1 noise per cell, for staggered animations
+const noise = (x: number, y: number) => {
+  const v = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+  return (v - Math.floor(v)).toFixed(3);
+};
+---
+
+<svg
+  class:list={['pixel-text', className]}
+  viewBox={`0 0 ${width} ${height}`}
+  width={width * 10}
+  height={height * 10}
+  preserveAspectRatio="xMinYMin meet"
+  shape-rendering="crispEdges"
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : (label ?? text.replace(/\n/g, ' '))}
+  aria-hidden={decorative ? 'true' : undefined}
+  style={`--cols:${width}`}
+>
+  <defs>
+    <linearGradient id={id} x1="0" y1="0" x2="0" y2={height} gradientUnits="userSpaceOnUse">
+      {stops.map((s, i) => <stop offset={i / Math.max(1, stops.length - 1)} stop-color={s} />)}
+    </linearGradient>
+  </defs>
+  {
+    mode === 'path' ? (
+      <path d={toPath(cells)} fill={`url(#${id})`} />
+    ) : (
+      <g fill={`url(#${id})`}>
+        {cells.map((c) => (
+          <rect class="px" x={c.x} y={c.y} width="1" height="1" style={`--x:${c.x};--r:${noise(c.x, c.y)}`} />
+        ))}
+      </g>
+    )
+  }
+</svg>
+

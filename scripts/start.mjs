@@ -10,8 +10,14 @@ import { statfs } from "node:fs/promises";
 import os from "node:os";
 import process from "node:process";
 import { clearTimeout, setTimeout } from "node:timers";
+import { fileURLToPath } from "node:url";
 
+import { BOUND_FLAG, nextLaunch } from "../lib/runtime/bridge.mjs";
 import { checkHardware } from "../lib/runtime/guard.mjs";
+import { loadEnvFile } from "./env.mjs";
+
+// A local `.env` fills only what the real environment does not already set.
+await loadEnvFile(fileURLToPath(new URL("../.env", import.meta.url)));
 
 const DEFAULT_FLOORS = { ramGb: 16, vramGb: 8, diskGb: 20 };
 const BYTES_PER_GB = 1e9;
@@ -228,8 +234,8 @@ async function stopNext() {
   }
 
   try {
-    // The child leads its own process group, so Next's workers stop with it.
-    process.kill(-child.pid, "SIGTERM");
+    // Kill the group Next actually runs in, so its workers stop with it.
+    process.kill(-process.getpgid(child.pid), "SIGTERM");
   } catch {
     child.kill("SIGTERM");
   }
@@ -237,7 +243,7 @@ async function stopNext() {
 
   if (child.exitCode === null && child.signalCode === null) {
     try {
-      process.kill(-child.pid, "SIGKILL");
+      process.kill(-process.getpgid(child.pid), "SIGKILL");
     } catch {
       child.kill("SIGKILL");
     }
@@ -270,11 +276,18 @@ async function shutDown({ code, stopChild }) {
   process.exit(code);
 }
 
-function spawnNext(args) {
+function spawnNext(forwarded) {
+  // the chat's CLI bridge answers only while Next listens on loopback alone (lib/runtime/bridge.mjs)
+  const { args, bound } = nextLaunch(forwarded, process.env.KINEMI_LOCAL_CLI);
+  // Always set, never deleted: `next start` fills unset variables from .env, so an unset flag could come back as "1"
+  const env = { ...process.env, [BOUND_FLAG]: bound ? "1" : "0" };
+  if (bound) console.log("Claude Code / Codex chat bridge: on. Next listens on this computer only; KINEMI_LOCAL_CLI=off to serve the network.");
+  else console.log("Claude Code / Codex chat bridge: off (Next isn't on 127.0.0.1 only, or KINEMI_LOCAL_CLI=off).");
   const child = spawn(nextCommand, ["start", ...args], {
-    env: process.env,
+    env,
     stdio: "inherit",
-    detached: !isWindows,
+    // No `detached`: a detached Next leads its own process group nothing signals, and it
+    // leaked (one next-server per test file, ~124 MB each) until oomd killed the terminal.
     shell: isWindows,
     windowsHide: true,
   });

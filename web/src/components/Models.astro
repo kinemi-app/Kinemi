@@ -1,0 +1,353 @@
+---
+import Browser from './Browser.astro';
+import Shot from './Shot.astro';
+import registry from '../../../data/models.json';
+
+/** Four of the server's open models, one card each; name, vendor, kind and length come from the registry. */
+const PICKS = [
+  { id: 'wan22-i2v', line: 'Animates a still with strong camera moves' },
+  { id: 'ltx-2', line: 'The longest takes in the studio' },
+  { id: 'flux-2-dev', line: 'Photographic stills and product shots' },
+  { id: 'chatterbox', line: 'Voice clone, voice swap and dubbing' },
+];
+
+const cards = PICKS.map(({ id, line }) => {
+  const model = registry.find((m) => m.id === id);
+  if (!model) throw new Error(`Models.astro: "${id}" is not in data/models.json`);
+  return { id, name: model.name, vendor: model.vendor, line };
+});
+
+const stats = [
+  { value: registry.length, label: 'open models', note: 'Wan, LTX, Hunyuan, FLUX, Qwen and more' },
+  { value: new Set(registry.map((m) => m.vendor)).size, label: 'vendors', note: 'one registry, no lock-in' },
+  { value: 60, label: 'camera moves', note: 'each with the prompt it writes' },
+  { value: 16, label: 'tools', note: 'from first shot to 4K upscale' },
+];
+---
+
+<section class="models" id="models" data-spy-target>
+  <div class="container">
+    <header class="models-head">
+      <h2 data-reveal>New creative horizons<br />with open models</h2>
+      <p class="lede" data-reveal style="--d:120">
+        Wan, LTX, Hunyuan, FLUX and Qwen weights in one registry. Every flow shows runtime and credits before you press generate.
+      </p>
+    </header>
+
+    <div class="models-stage" data-reveal style="--d:200">
+      <div class="models-window">
+        <Browser>
+          <Shot name="studio-desktop" sizes="(max-width: 760px) 92vw, 62vw" />
+        </Browser>
+      </div>
+      <ul class="model-cards" aria-label="Four of the open models">
+        {
+          cards.map((c, i) => (
+            <li class={`float float-${i + 1} model-card`} data-model={c.id}>
+              <strong class="mc-name">{c.name}</strong>
+              <span class="mc-line">{c.line}</span>
+              <span class="mc-vendor">{c.vendor}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <dl class="stats">
+      {
+        stats.map((s, i) => (
+          <div class="stat" data-reveal style={`--d:${i * 90}`}>
+            <dt>
+              <span class="stat-value" data-count={s.value}>
+                {s.value}
+              </span>
+              <span class="stat-label">{s.label}</span>
+            </dt>
+            <dd>{s.note}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .models {
+    padding: clamp(96px, 12vw, 168px) 0 clamp(80px, 9vw, 128px);
+  }
+
+  .models-head {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .models-head h2 {
+    font-size: clamp(32px, 3.6vw, 52px);
+  }
+
+  .models-head .lede {
+    max-width: 46ch;
+  }
+
+  .models-stage {
+    position: relative;
+    margin: clamp(56px, 6vw, 88px) auto 0;
+    width: min(100%, 1080px);
+    padding: 3% 0 5%;
+    perspective: 1600px;
+  }
+
+  .models-window {
+    position: relative;
+    z-index: 1;
+    width: 66%;
+    margin: 0 auto;
+    transform-origin: 50% 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .models-window {
+        animation: window-tilt linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 45%;
+      }
+
+      @keyframes window-tilt {
+        from {
+          transform: rotateX(24deg) scale(0.9) translateY(40px);
+          opacity: 0.4;
+        }
+        to {
+          transform: none;
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .model-cards {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .float {
+    position: absolute;
+    z-index: 2;
+    border-radius: clamp(10px, 1.2vw, 16px);
+    box-shadow:
+      inset 0 0 0 1px var(--line-2),
+      0 30px 60px -20px rgba(0, 0, 0, 0.85);
+    rotate: var(--rot);
+    animation: bob var(--bob, 7s) var(--ease-in-out) infinite alternate;
+    transition:
+      rotate 0.6s var(--ease-out),
+      scale 0.6s var(--ease-out);
+  }
+
+  .model-card {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    padding: 16px 18px;
+    background: rgba(12, 18, 24, 0.82);
+    backdrop-filter: blur(14px);
+  }
+
+  .mc-name {
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+  }
+
+  .mc-line {
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--fg-2);
+  }
+
+  .mc-vendor {
+    font-size: 12px;
+    color: var(--fg-2);
+  }
+
+  .float:hover {
+    rotate: 0deg;
+    scale: 1.04;
+  }
+
+  .float-1,
+  .float-2,
+  .float-3,
+  .float-4 {
+    min-width: 184px;
+  }
+
+  .float-1 {
+    --rot: -11deg;
+    --bob: 6.5s;
+    left: 1%;
+    top: 6%;
+    width: 19%;
+  }
+
+  .float-2 {
+    --rot: 9deg;
+    --bob: 8s;
+    right: 2%;
+    top: -1%;
+    width: 18%;
+  }
+
+  .float-3 {
+    --rot: 7deg;
+    --bob: 7.4s;
+    left: 4%;
+    bottom: 0%;
+    width: 17%;
+  }
+
+  .float-4 {
+    --rot: -8deg;
+    --bob: 6.8s;
+    right: 3%;
+    bottom: -3%;
+    width: 20%;
+  }
+
+  @keyframes bob {
+    to {
+      translate: 0 -14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .float {
+        animation:
+          bob var(--bob, 7s) var(--ease-in-out) infinite alternate,
+          drift linear both;
+        animation-timeline: auto, view();
+        animation-range: normal, cover;
+      }
+
+      .float-1,
+      .float-3 {
+        --drift: 60px;
+      }
+
+      .float-2,
+      .float-4 {
+        --drift: -50px;
+      }
+
+      @keyframes drift {
+        from {
+          transform: translateY(var(--drift));
+        }
+        to {
+          transform: translateY(calc(var(--drift) * -1));
+        }
+      }
+    }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: clamp(56px, 7vw, 96px) 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat {
+    padding: 28px 24px 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .stat:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .stat dt {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .stat-value {
+    font-size: clamp(40px, 4.6vw, 64px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #fff, var(--green-300));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .stat-label {
+    font-size: 15px;
+    color: var(--fg);
+  }
+
+  .stat dd {
+    margin: 10px 0 0;
+    color: var(--fg-3);
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .models-window {
+      width: 82%;
+    }
+
+    .float {
+      width: 22%;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 28px;
+    }
+
+    .stat:nth-child(3) {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .models-window {
+      width: 100%;
+    }
+
+    .model-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .float {
+      position: static;
+      width: auto;
+      min-width: 0;
+      rotate: none;
+      animation: none;
+    }
+
+    .model-card {
+      padding: 14px;
+    }
+
+    .mc-name {
+      font-size: 17px;
+    }
+  }
+</style>

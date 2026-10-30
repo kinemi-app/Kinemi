@@ -203,7 +203,7 @@ test("posters use the shared product photo only when one is present", async () =
   });
   assert.equal(withoutPhoto.result.kind, "image");
   assert.equal(nodeOf(lastGraph(), "LoadImage"), undefined);
-  assert.ok(classes(lastGraph()).includes("EmptyLatentImage"));
+  assert.ok(classes(lastGraph()).includes("EmptyFlux2LatentImage"));
 });
 
 test("hooks render one still per submit on the ads image model", async () => {

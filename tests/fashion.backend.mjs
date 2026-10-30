@@ -223,7 +223,7 @@ test("drape and lighting controls reach the still graph prompt", async () => {
   assert.match(kept, /lighting match: 7\/10/);
   assert.match(kept, /preserve the garment drape/);
   assert.match(kept, /preserve the original lighting direction/);
-  assert.equal(nodeOf(lastGraph(), "CheckpointLoaderSimple")?.inputs.ckpt_name, "flux2-dev.safetensors");
+  assert.equal(nodeOf(lastGraph(), "UNETLoader")?.inputs.unet_name, "flux2_dev_fp8mixed.safetensors");
 
   await submit({
     mode: "fashion",

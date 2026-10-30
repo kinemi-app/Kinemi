@@ -1,0 +1,54 @@
+---
+import { K_PATH, LOGO_VIEWBOX, PIXEL_ROWS, SEAM_PATH, BRAND } from '../lib/logo';
+import PixelText from './PixelText.astro';
+
+interface Props {
+  class?: string;
+  wordmark?: boolean;
+}
+const { class: className, wordmark = true } = Astro.props;
+---
+
+<span class:list={['logo', className]}>
+  <svg class="logo-mark" viewBox={LOGO_VIEWBOX} aria-hidden="true">
+    <path class="logo-k" d={K_PATH} fill="currentColor" />
+    <g class="logo-pixels">
+      {PIXEL_ROWS.map((r, i) => <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={BRAND.green} style={`--i:${i}`} />)}
+    </g>
+    <path d={SEAM_PATH} fill="none" stroke={BRAND.seam} stroke-width="4" stroke-dasharray="9.6 3.9" />
+  </svg>
+  {wordmark && <PixelText class="logo-word" text="KINEMI" stops={['#ffffff', '#ffffff']} decorative />}
+  <span class="sr-only">Kinemi</span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+  }
+
+  .logo-mark {
+    width: 27px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .logo :global(.logo-word) {
+    width: auto;
+    height: 14px;
+  }
+
+  .logo-pixels rect {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.5s var(--ease-spring);
+    transition-delay: calc(var(--i) * 60ms);
+  }
+
+  :global(a:hover) .logo-pixels rect,
+  .logo:hover .logo-pixels rect {
+    transform: translate(18px, -18px);
+  }
+</style>

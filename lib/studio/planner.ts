@@ -1,13 +1,14 @@
 import { defaultModelForMode } from "../models";
 import type { Mode } from "../types";
+import type { PlannedShot } from "./llm";
 
-export type PlannedShot = {
-  index: number;
-  title: string;
-  prompt: string;
-  mode: Mode;
-  modelId: string;
-  durationS: number;
+export type { PlannedShot };
+
+export type PlanSource = "model" | "template";
+
+export type PlanResult = {
+  shots: PlannedShot[];
+  source: PlanSource;
 };
 
 type ShotTemplate = {
@@ -63,6 +64,23 @@ export function planCampaign(brief: string): PlannedShot[] {
     modelId: defaultModelForMode(template.mode).id,
     durationS: template.durationS,
   }));
+}
+
+/**
+ * The model's plan when one is configured and every shot validates; the template on any error.
+ * A model failure must still leave the batch with a plan it can run, so the fallback is quiet.
+ */
+export async function planShots(brief: string): Promise<PlanResult> {
+  const { llmConfigured, planWithLlm } = await import("./llm");
+  if (llmConfigured()) {
+    try {
+      return { shots: await planWithLlm(brief), source: "model" };
+    } catch {
+      // Falling back is the contract here: an unreachable or malformed model answer is a
+      // reason to use the template, not to fail the request.
+    }
+  }
+  return { shots: planCampaign(brief), source: "template" };
 }
 
 export const MIN_BRIEF = 12;

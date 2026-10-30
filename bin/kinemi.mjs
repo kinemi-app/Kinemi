@@ -2,31 +2,34 @@
 
 /**
  * Kinemi's command line. It talks to a running app: start one with `npm run start` (or `npm run
- * dev`) and point --base at it. `schedule` and `parity` work offline.
+ * dev`) and point --base at it. `schedule` works offline.
  */
 
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
-import { spawn } from "node:child_process";
+
+import { CRON_FIELDS, SCHEDULES, isDue, readSchedules, writeSchedules } from "./schedules.mjs";
 
 const HOME = join(homedir(), ".kinemi");
-const SCHEDULES = join(HOME, "schedules.json");
 const DEFAULT_BASE = process.env.KINEMI_BASE ?? "http://localhost:4321";
 const POLL_MS = 700;
 const REQUEST_TIMEOUT_MS = 20000;
 const JOB_TIMEOUT_MS = 120000;
+const DEFAULT_CONCURRENCY = 2;
 
 const USAGE = `kinemi - plan and run campaigns against a Kinemi server
 
   kinemi plan --brief "text" [--out plan.json] [--base url]
   kinemi batch --plan plan.json [--concurrency 2] [--base url] [--dry-run]
+  kinemi run plan.json [--base url]
+  kinemi status <jobId> [--base url]
   kinemi schedule add --cron "0 9 * * *" --plan plan.json [--name text] [--base url]
+  kinemi schedule run-due [--notify slack,notion,drive]
   kinemi schedule list
   kinemi schedule print
   kinemi schedule remove --id <id>
-  kinemi parity
 
 The server base defaults to ${DEFAULT_BASE}, or KINEMI_BASE.
 Schedules live in ${SCHEDULES}; nothing is installed into your crontab by this tool.`;
@@ -96,6 +99,11 @@ function postJson(base, path, payload) {
   });
 }
 
+/** A result URL may be relative to the server (a cloud render's /api/comfy/view link); print it whole. */
+function fullUrl(url, base) {
+  return typeof url === "string" && url !== "" ? new URL(url, base).toString() : undefined;
+}
+
 function readBase(args) {
   const base = typeof args.base === "string" ? args.base : DEFAULT_BASE;
   try {
@@ -138,40 +146,49 @@ async function runShot(shot, base) {
     const job = await request(base, `/api/jobs/${accepted.jobId}`);
     const seconds = ((Date.now() - started) / 1000).toFixed(1);
     if (job.status === "succeeded") {
-      return { ok: true, line: `${shot.index}. ${shot.title} · ok · ${seconds}s` };
+      return {
+        ok: true,
+        status: "succeeded",
+        title: shot.title,
+        url: fullUrl(job.result?.url, base),
+        line: `${shot.index}. ${shot.title} · ok · ${seconds}s`,
+      };
     }
     if (job.status === "failed") {
-      return { ok: false, line: `${shot.index}. ${shot.title} · failed · ${job.error ?? "no reason"}` };
+      return {
+        ok: false,
+        status: "failed",
+        title: shot.title,
+        error: job.error ?? "no reason",
+        line: `${shot.index}. ${shot.title} · failed · ${job.error ?? "no reason"}`,
+      };
     }
     if (Date.now() - started > JOB_TIMEOUT_MS) {
-      return { ok: false, line: `${shot.index}. ${shot.title} · timed out after ${seconds}s` };
+      return {
+        ok: false,
+        status: "timed out",
+        title: shot.title,
+        line: `${shot.index}. ${shot.title} · timed out after ${seconds}s`,
+      };
     }
   }
 }
 
-async function commandBatch(args) {
-  if (typeof args.plan !== "string") {
-    return fail("batch needs --plan <file>\n\n" + USAGE, 2);
-  }
-
-  const raw = JSON.parse(await readFile(resolve(args.plan), "utf8"));
+async function loadShots(planPath) {
+  const raw = JSON.parse(await readFile(resolve(planPath), "utf8"));
   const shots = Array.isArray(raw) ? raw : raw?.shots;
   if (!Array.isArray(shots) || shots.length === 0) {
-    return fail(`${args.plan} holds no shots`);
+    throw new Error(`${planPath} holds no shots`);
   }
   for (const shot of shots) {
     if (typeof shot.mode !== "string" || typeof shot.modelId !== "string" || typeof shot.prompt !== "string") {
-      return fail(`${args.plan} has a shot without mode, modelId or prompt`);
+      throw new Error(`${planPath} has a shot without mode, modelId or prompt`);
     }
   }
+  return shots;
+}
 
-  if (args["dry-run"]) {
-    console.log(`${shots.length} shots valid: ${shots.map((shot) => shot.mode).join(", ")}`);
-    return;
-  }
-
-  const base = readBase(args);
-  const limit = Math.min(8, Math.max(1, Number(args.concurrency ?? 2) || 2));
+async function runBatch(shots, base, limit) {
   console.log(`${shots.length} shots, ${limit} at a time, against ${base}`);
 
   let cursor = 0;
@@ -185,48 +202,179 @@ async function commandBatch(args) {
         results[index] = await runShot(shot, base);
       } catch (cause) {
         const reason = cause instanceof Error ? cause.message : String(cause);
-        results[index] = { ok: false, line: `${shot.index}. ${shot.title} · failed · ${reason}` };
+        results[index] = {
+          ok: false,
+          status: "failed",
+          title: shot.title,
+          error: reason,
+          line: `${shot.index}. ${shot.title} · failed · ${reason}`,
+        };
       }
       console.log(results[index].line);
     }
   }
   await Promise.all(Array.from({ length: Math.min(limit, shots.length) }, worker));
+  return results;
+}
 
+function summarize(results, total) {
   const ok = results.filter((result) => result.ok).length;
-  console.log(`\n${ok}/${shots.length} succeeded`);
-  if (ok !== shots.length) {
+  console.log(`\n${ok}/${total} succeeded`);
+  if (ok !== total) {
     process.exitCode = 1;
   }
 }
 
-const CRON_FIELDS = 5;
-
-async function readSchedules() {
-  let raw;
-  try {
-    raw = await readFile(SCHEDULES, "utf8");
-  } catch (cause) {
-    if (cause instanceof Error && cause.code === "ENOENT") {
-      return [];
-    }
-    throw new Error(`cannot read ${SCHEDULES}: ${cause instanceof Error ? cause.message : String(cause)}`);
+async function commandBatch(args) {
+  if (typeof args.plan !== "string") {
+    return fail("batch needs --plan <file>\n\n" + USAGE, 2);
   }
 
-  let entries;
+  let shots;
   try {
-    entries = JSON.parse(raw);
+    shots = await loadShots(args.plan);
   } catch (cause) {
-    throw new Error(`${SCHEDULES} is not valid JSON: ${cause instanceof Error ? cause.message : String(cause)}`);
+    return fail(cause instanceof Error ? cause.message : String(cause));
   }
-  if (!Array.isArray(entries)) {
-    throw new Error(`${SCHEDULES} does not hold a list of schedules`);
+
+  if (args["dry-run"]) {
+    console.log(`${shots.length} shots valid: ${shots.map((shot) => shot.mode).join(", ")}`);
+    return;
   }
-  return entries;
+
+  const base = readBase(args);
+  const limit = Math.min(8, Math.max(1, Number(args.concurrency ?? DEFAULT_CONCURRENCY) || DEFAULT_CONCURRENCY));
+  const results = await runBatch(shots, base, limit);
+  summarize(results, shots.length);
 }
 
-async function writeSchedules(entries) {
-  await mkdir(HOME, { recursive: true });
-  await writeFile(SCHEDULES, `${JSON.stringify(entries, null, 2)}\n`);
+async function commandRun(args) {
+  const planPath = args._[1];
+  if (typeof planPath !== "string" || planPath === "") {
+    return fail("run needs a plan file\n\n" + USAGE, 2);
+  }
+
+  let shots;
+  try {
+    shots = await loadShots(planPath);
+  } catch (cause) {
+    return fail(cause instanceof Error ? cause.message : String(cause));
+  }
+
+  const base = readBase(args);
+  const results = [];
+  for (const shot of shots) {
+    let result;
+    try {
+      result = await runShot(shot, base);
+    } catch (cause) {
+      const reason = cause instanceof Error ? cause.message : String(cause);
+      result = {
+        ok: false,
+        status: "failed",
+        title: shot.title,
+        error: reason,
+        line: `${shot.index}. ${shot.title} · failed · ${reason}`,
+      };
+    }
+    console.log(`${shot.index}. ${shot.title} · ${result.status}${result.url ? ` · ${result.url}` : ""}`);
+    results.push(result);
+  }
+
+  if (results.some((result) => !result.ok)) {
+    process.exitCode = 1;
+  }
+}
+
+async function commandStatus(args) {
+  const jobId = args._[1];
+  if (typeof jobId !== "string" || jobId === "") {
+    return fail("status needs a job id\n\n" + USAGE, 2);
+  }
+
+  const base = readBase(args);
+  const job = await request(base, `/api/jobs/${encodeURIComponent(jobId)}`);
+  console.log(job.status);
+  const resultUrl = fullUrl(job.result?.url, base);
+  if (resultUrl) {
+    console.log(resultUrl);
+  } else if (typeof job.error === "string" && job.error !== "") {
+    console.log(job.error);
+  }
+  if (job.status === "failed") {
+    process.exitCode = 1;
+  }
+}
+
+const NOTIFY_TARGETS = ["slack", "notion", "drive"];
+
+/** Run every due plan through the batch path, then announce the finished jobs to --notify. */
+async function commandRunDue(args) {
+  const requested =
+    typeof args.notify === "string"
+      ? args.notify.split(",").map((target) => target.trim()).filter((target) => target !== "")
+      : [];
+  const unknown = requested.find((target) => !NOTIFY_TARGETS.includes(target));
+  if (unknown !== undefined) {
+    return fail(`unknown --notify target "${unknown}"; use slack, notion or drive`, 2);
+  }
+
+  const due = (await readSchedules()).filter((entry) => isDue(entry, new Date()));
+  if (due.length === 0) {
+    console.log("no schedules are due");
+    return;
+  }
+
+  const finished = [];
+  let failed = false;
+  for (const entry of due) {
+    let shots;
+    try {
+      shots = await loadShots(entry.plan);
+    } catch (cause) {
+      console.error(`schedule ${entry.id}: ${cause instanceof Error ? cause.message : String(cause)}`);
+      failed = true;
+      continue;
+    }
+    console.log(`schedule ${entry.id} · ${entry.name ?? entry.plan}`);
+    const results = await runBatch(shots, entry.base ?? DEFAULT_BASE, DEFAULT_CONCURRENCY);
+    if (results.some((result) => !result.ok)) {
+      failed = true;
+    }
+    for (const result of results) {
+      finished.push(`${result.title} · ${result.status}${result.url ? ` · ${result.url}` : ""}`);
+    }
+  }
+
+  if (requested.length === 0 || finished.length === 0) {
+    if (failed) process.exitCode = 1;
+    return;
+  }
+
+  let connectors;
+  try {
+    // bin runs under bare node; type stripping needs Node 22.18 or newer, so load it only here.
+    connectors = await import("../lib/studio/connectors.ts");
+  } catch {
+    return fail("connectors need Node 22.18 or newer (TypeScript type stripping)");
+  }
+  const configured = connectors.configuredTargets();
+  for (const target of requested) {
+    if (!configured.includes(target)) {
+      console.log(`skipped ${target}: not configured`);
+      continue;
+    }
+    try {
+      await connectors.publish(target, { title: "Kinemi schedule run", text: finished.join("\n") });
+      console.log(`published ${target}`);
+    } catch (cause) {
+      console.error(`${target}: ${cause instanceof Error ? cause.message : String(cause)}`);
+      failed = true;
+    }
+  }
+  if (failed) {
+    process.exitCode = 1;
+  }
 }
 
 function cronLine(entry) {
@@ -236,6 +384,10 @@ function cronLine(entry) {
 
 async function commandSchedule(args) {
   const action = args._[1] ?? "list";
+  if (action === "run-due") {
+    return commandRunDue(args);
+  }
+
   const entries = await readSchedules();
 
   if (action === "list") {
@@ -294,13 +446,6 @@ async function commandSchedule(args) {
   fail(`unknown schedule action "${action}"\n\n${USAGE}`, 2);
 }
 
-function commandParity() {
-  const child = spawn(process.execPath, ["scripts/check-parity.mjs"], { stdio: "inherit" });
-  child.on("exit", (code) => {
-    process.exitCode = code ?? 1;
-  });
-}
-
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const command = args._[0];
@@ -315,10 +460,12 @@ async function main() {
       return commandPlan(args);
     case "batch":
       return commandBatch(args);
+    case "run":
+      return commandRun(args);
+    case "status":
+      return commandStatus(args);
     case "schedule":
       return commandSchedule(args);
-    case "parity":
-      return commandParity();
     default:
       return fail(`unknown command "${command}"\n\n${USAGE}`, 2);
   }

@@ -1,0 +1,17 @@
+---
+// /legal/: the list of policies.
+import Legal from '../../layouts/Legal.astro';
+import { POLICIES, policyUrl } from '../../data/legal';
+---
+
+<Legal title="Policies" slug="" kicker="Legal" description="Kinemi's imprint, privacy policy, terms and the rest.">
+  <ul>
+    {
+      POLICIES.map((p) => (
+        <li>
+          <a href={policyUrl(p.slug)}>{p.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Legal>

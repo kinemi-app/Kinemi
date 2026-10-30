@@ -1,0 +1,22 @@
+---
+// The viewfinder beside the sign-in forms: a slate, the pixel word and what Kinemi is. Decorative.
+import PixelText from './PixelText.astro';
+
+interface Props {
+  word: string;
+  take: string;
+  line: string;
+}
+const { word, take, line } = Astro.props;
+---
+
+<aside class="auth-art" aria-hidden="true">
+  <span class="auth-rec"><i></i>REC · {take}</span>
+  <PixelText text={word} decorative stops={['#e9fff2', '#39d879']} />
+  <p>{line}</p>
+  <div class="auth-facts">
+    <span>16 tools</span>
+    <span>Open models</span>
+    <span>Your own compute</span>
+  </div>
+</aside>

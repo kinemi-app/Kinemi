@@ -17,11 +17,38 @@ import { wanVideoGraph } from "./wan";
  */
 
 const NEGATIVE_PROMPT = "blurry, low quality, distorted";
-const LTX_CHECKPOINT = "ltx-2-dev.safetensors";
+
+/**
+ * The split files Comfy Cloud ships (tests/fixtures/cloud-object-info.json): it has no single-file
+ * LTX-2.5 checkpoint, so both LTX models load transformer, video VAE and text encoders apart.
+ * LTX-2 reads Gemma 3 through its embeddings connector; LTX-2.5's Gemma 4 file carries its own.
+ */
+type LtxFiles = { unet: string; vae: string; textEncoders: readonly [string] | readonly [string, string] };
+const LTX_FILES: Record<"ltx-2" | "ltx-25", LtxFiles> = {
+  "ltx-2": {
+    unet: "ltx-2-19b-dev-fp8_transformer_only.safetensors",
+    vae: "LTX2_video_vae_bf16.safetensors",
+    textEncoders: ["gemma_3_12B_it_fp4_mixed.safetensors", "ltx-2-19b-embeddings_connector_dev_bf16.safetensors"],
+  },
+  "ltx-25": {
+    unet: "ltx-2.5-22b-dev-transformer-bf16.safetensors",
+    vae: "ltx-2.5-video-vae-bf16.safetensors",
+    textEncoders: ["gemma4-12b-with-proj-ltx-2.5-bf16.safetensors"],
+  },
+};
+const LTX_CLIP_TYPE = "ltxv";
 const LTX_FPS = 24;
-const HUNYUAN_UNET = "hunyuan_video_15_t2v_fp8_scaled.safetensors";
-const HUNYUAN_CLIP = "llava_llama3_fp8_scaled.safetensors";
-const HUNYUAN_VAE = "hunyuan_video_vae_bf16.safetensors";
+/**
+ * LTX's nodes step width and height by 32, and its video VAE fails to encode a 720-high first frame
+ * (a real Cloud LTX-2.5 run: "can't divide axis of length 45 in chunks of 2"). 704 is the 32-step below 720.
+ */
+const LTX_WIDTH = VIDEO_WIDTH;
+const LTX_HEIGHT = 704;
+const HUNYUAN_UNET = "hunyuanvideo1.5_720p_t2v_fp16.safetensors";
+const HUNYUAN_QWEN_CLIP = "qwen_2.5_vl_7b_fp8_scaled.safetensors";
+const HUNYUAN_GLYPH_CLIP = "byt5_small_glyphxl_fp16.safetensors";
+const HUNYUAN_CLIP_TYPE = "hunyuan_video_15";
+const HUNYUAN_VAE = "hunyuanvideo15_vae_fp16.safetensors";
 const HUNYUAN_FPS = 24;
 const HUNYUAN_STEPS = 30;
 const HUNYUAN_CFG = 6;
@@ -36,17 +63,24 @@ function hunyuanFrames(durationS: number): number {
   return Math.max(5, Math.round((durationS * HUNYUAN_FPS) / 4) * 4 + 1);
 }
 
-function ltxGraph(request: GenerateRequest, imageName: string | undefined): WorkflowGraph {
+function ltxTextEncoder(builder: ReturnType<typeof createGraphBuilder>, files: LtxFiles): string {
+  const [first, second] = files.textEncoders;
+  return second === undefined
+    ? addNode(builder, "CLIPLoader", { clip_name: first, type: LTX_CLIP_TYPE })
+    : addNode(builder, "DualCLIPLoader", { clip_name1: first, clip_name2: second, type: LTX_CLIP_TYPE });
+}
+
+function ltxGraph(
+  request: GenerateRequest,
+  files: LtxFiles,
+  imageName: string | undefined,
+): WorkflowGraph {
   const builder = createGraphBuilder();
-  const checkpoint = addNode(builder, "CheckpointLoaderSimple", { ckpt_name: LTX_CHECKPOINT });
-  const positive = addNode(builder, "CLIPTextEncode", {
-    text: request.prompt,
-    clip: [checkpoint, 1],
-  });
-  const negative = addNode(builder, "CLIPTextEncode", {
-    text: NEGATIVE_PROMPT,
-    clip: [checkpoint, 1],
-  });
+  const model = addNode(builder, "UNETLoader", { unet_name: files.unet, weight_dtype: "default" });
+  const vae = addNode(builder, "VAELoader", { vae_name: files.vae });
+  const clip = ltxTextEncoder(builder, files);
+  const positive = addNode(builder, "CLIPTextEncode", { text: request.prompt, clip: [clip, 0] });
+  const negative = addNode(builder, "CLIPTextEncode", { text: NEGATIVE_PROMPT, clip: [clip, 0] });
   const length = ltxFrames(request.durationS);
 
   let positiveConditioning: [string, number] = [positive, 0];
@@ -57,10 +91,10 @@ function ltxGraph(request: GenerateRequest, imageName: string | undefined): Work
     const out = addNode(builder, "LTXVImgToVideo", {
       positive: [positive, 0],
       negative: [negative, 0],
-      vae: [checkpoint, 2],
+      vae: [vae, 0],
       image: [image, 0],
-      width: VIDEO_WIDTH,
-      height: VIDEO_HEIGHT,
+      width: LTX_WIDTH,
+      height: LTX_HEIGHT,
       length,
       batch_size: 1,
       strength: 0.9,
@@ -70,8 +104,8 @@ function ltxGraph(request: GenerateRequest, imageName: string | undefined): Work
     latent = [out, 2];
   } else {
     const empty = addNode(builder, "EmptyLTXVLatentVideo", {
-      width: VIDEO_WIDTH,
-      height: VIDEO_HEIGHT,
+      width: LTX_WIDTH,
+      height: LTX_HEIGHT,
       length,
       batch_size: 1,
     });
@@ -94,7 +128,7 @@ function ltxGraph(request: GenerateRequest, imageName: string | undefined): Work
     terminal: 0.1,
   });
   const sampled = addNode(builder, "SamplerCustom", {
-    model: [checkpoint, 0],
+    model: [model, 0],
     add_noise: true,
     noise_seed: request.seed ?? 0,
     cfg: 3,
@@ -104,9 +138,9 @@ function ltxGraph(request: GenerateRequest, imageName: string | undefined): Work
     sigmas: [sigmas, 0],
     latent_image: latent,
   });
-  const decoded = addNode(builder, "VAEDecode", { samples: [sampled, 0], vae: [checkpoint, 2] });
+  const decoded = addNode(builder, "VAEDecode", { samples: [sampled, 0], vae: [vae, 0] });
   addVideoOutput(builder, decoded, "kinemi/cinematic", LTX_FPS);
-  return { nodes: builder.nodes, output: "video", width: VIDEO_WIDTH, height: VIDEO_HEIGHT };
+  return { nodes: builder.nodes, output: "video", width: LTX_WIDTH, height: LTX_HEIGHT };
 }
 
 function hunyuanGraph(request: GenerateRequest): WorkflowGraph {
@@ -115,9 +149,10 @@ function hunyuanGraph(request: GenerateRequest): WorkflowGraph {
     unet_name: HUNYUAN_UNET,
     weight_dtype: "default",
   });
-  const clip = addNode(builder, "CLIPLoader", {
-    clip_name: HUNYUAN_CLIP,
-    type: "hunyuan_video",
+  const clip = addNode(builder, "DualCLIPLoader", {
+    clip_name1: HUNYUAN_QWEN_CLIP,
+    clip_name2: HUNYUAN_GLYPH_CLIP,
+    type: HUNYUAN_CLIP_TYPE,
   });
   const vae = addNode(builder, "VAELoader", { vae_name: HUNYUAN_VAE });
   const positive = addNode(builder, "CLIPTextEncode", { text: request.prompt, clip: [clip, 0] });
@@ -125,7 +160,7 @@ function hunyuanGraph(request: GenerateRequest): WorkflowGraph {
     text: NEGATIVE_PROMPT,
     clip: [clip, 0],
   });
-  const latent = addNode(builder, "EmptyHunyuanLatentVideo", {
+  const latent = addNode(builder, "EmptyHunyuanVideo15Latent", {
     width: VIDEO_WIDTH,
     height: VIDEO_HEIGHT,
     length: hunyuanFrames(request.durationS),
@@ -166,10 +201,12 @@ export function graph(request: GenerateRequest): WorkflowGraph {
             "kinemi/cinematic",
           );
     case "ltx-2":
+    case "ltx-25": {
       if (endImageName !== "") {
-        throw new Error("the LTX-2 graph takes a first frame, not a last frame");
+        throw new Error(`the ${request.modelId} graph takes a first frame, not a last frame`);
       }
-      return ltxGraph(request, imageName === "" ? undefined : imageName);
+      return ltxGraph(request, LTX_FILES[request.modelId], imageName === "" ? undefined : imageName);
+    }
     case "hunyuan-15":
       if (endImageName !== "") {
         throw new Error("the HunyuanVideo 1.5 graph takes a first frame, not a last frame");

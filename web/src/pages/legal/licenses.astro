@@ -1,0 +1,105 @@
+---
+// Kinemi's own license, the software it is built with, and the licenses of the open models it runs.
+import Legal from '../../layouts/Legal.astro';
+import { LEGAL } from '../../data/legal';
+import { MODELS } from '../../app/data/models';
+
+const SOFTWARE = [
+  { name: 'Astro', what: 'builds the site', license: 'MIT', url: 'https://github.com/withastro/astro' },
+  { name: 'Preact and @preact/signals', what: 'the studio’s interface', license: 'MIT', url: 'https://github.com/preactjs/preact' },
+  { name: 'three.js', what: 'the 3D models', license: 'MIT', url: 'https://github.com/mrdoob/three.js' },
+  { name: 'supabase-js', what: 'accounts, on versions that have them', license: 'MIT', url: 'https://github.com/supabase/supabase-js' },
+  { name: 'Space Grotesk', what: 'the typeface, served from this site', license: 'SIL Open Font License 1.1', url: 'https://github.com/floriankarsten/space-grotesk' },
+];
+
+// one row per license, with the models that use it
+const byLicense = new Map<string, { license: (typeof MODELS)[number]['license']; models: string[] }>();
+for (const m of MODELS) {
+  const key = `${m.license.name}|${m.license.url}`;
+  const row = byLicense.get(key) ?? { license: m.license, models: [] };
+  row.models.push(m.name);
+  byLicense.set(key, row);
+}
+---
+
+<Legal title="Licenses" slug="licenses" kicker="Open source" description="Kinemi's license, the software it is built with and the licenses of the open models it runs.">
+  <h2 id="kinemi">Kinemi</h2>
+  {
+    LEGAL.license ? (
+      <p>
+        Kinemi's source code is open source under the <strong>{LEGAL.license}</strong> license
+        {LEGAL.repoUrl && (
+          <>
+            {' '}
+            and lives at <a href={LEGAL.repoUrl}>{LEGAL.repoUrl.replace(/^https?:\/\//, '')}</a>
+          </>
+        )}
+        . The pixel alphabet, the icons, the 3D models and the copy are part of it.
+      </p>
+    ) : (
+      <p>The pixel alphabet, the icons, the 3D models and the copy were made for Kinemi.</p>
+    )
+  }
+
+  <h2 id="software">Software</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Project</th>
+          <th scope="col">Used for</th>
+          <th scope="col">License</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          SOFTWARE.map((s) => (
+            <tr>
+              <td>
+                <a href={s.url}>{s.name}</a>
+              </td>
+              <td>{s.what}</td>
+              <td>{s.license}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>
+    <strong>ComfyUI</strong> (GPL-3.0) is not part of Kinemi: Kinemi talks to a ComfyUI you run, or to Comfy Cloud, over its web API. The upscaler and the frame interpolation in the Upscale tool come from model files and the
+    ComfyUI-Frame-Interpolation node pack you install yourself; their licenses are on their own pages.
+  </p>
+
+  <h2 id="models">Open models</h2>
+  <p>
+    Kinemi builds the workflows; the model weights run on your compute under their own licenses, and those licenses apply to you. They change from release to release: <strong
+      >the model card is what counts</strong
+    >, so check it before you use a model, and especially before commercial use.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">License</th>
+          <th scope="col">Models</th>
+          <th scope="col">Worth knowing</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          [...byLicense.values()].map((r) => (
+            <tr>
+              <td>
+                <a href={r.license.url}>{r.license.name}</a>
+              </td>
+              <td>{r.models.join(', ')}</td>
+              <td>{r.license.note ?? 'Allows commercial use under its terms.'}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>In Settings → Models you can hide any model you don't want in the pickers, for example one whose license doesn't fit how or where you work.</p>
+</Legal>

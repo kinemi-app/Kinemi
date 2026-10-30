@@ -1,5 +1,6 @@
 import type { GenerateRequest, Job, JobResult } from "../types";
 import { createJob, refresh, type Generator } from "./store";
+import { speak } from "./tts";
 
 /**
  * Demo mode: no Comfy deployment exists yet, so a render resolves to a deterministic SVG poster
@@ -41,6 +42,30 @@ function clip(text: string, length: number): string {
   return clean.length > length ? `${clean.slice(0, length - 1)}...` : clean;
 }
 
+/**
+ * Break a caption into at most two lines, so a long prompt stays inside the frame. A caption that
+ * would need a third line ends its second with an ellipsis instead, so no text disappears unseen.
+ */
+function wrap(text: string, perLine: number): string[] {
+  const lines: string[] = [];
+  let line = "";
+  for (const word of text.split(" ")) {
+    if (line && `${line} ${word}`.length > perLine) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = line ? `${line} ${word}` : word;
+    }
+  }
+  if (line) {
+    lines.push(line);
+  }
+  if (lines.length > 2) {
+    lines[1] = `${(lines[1] ?? "").slice(0, perLine - 1).trimEnd()}…`;
+  }
+  return lines.slice(0, 2);
+}
+
 export function demoPoster(request: GenerateRequest): JobResult {
   const seed = hash(`${request.mode}|${request.modelId}|${request.prompt}|${request.durationS}`);
   const hue = seed % 360;
@@ -48,10 +73,10 @@ export function demoPoster(request: GenerateRequest): JobResult {
   const angle = 20 + (seed % 60);
   const glowX = 20 + ((seed >> 3) % 60);
   const glowY = 20 + ((seed >> 7) % 50);
-  const title = escapeXml(clip(request.prompt, 96));
+  const title = wrap(clip(request.prompt, 96), 56).map(escapeXml);
   const mode = escapeXml(request.mode);
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${title}">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${title.join(' ')}">
   <defs>
     <linearGradient id="bg" gradientTransform="rotate(${angle} 0.5 0.5)">
       <stop offset="0" stop-color="hsl(${hue} 55% 12%)"/>
@@ -65,7 +90,7 @@ export function demoPoster(request: GenerateRequest): JobResult {
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
   <circle cx="${(glowX / 100) * WIDTH}" cy="${(glowY / 100) * HEIGHT}" r="360" fill="url(#glow)"/>
   <rect x="40" y="40" width="${WIDTH - 80}" height="${HEIGHT - 80}" fill="none" stroke="hsl(${hue} 30% 70%)" stroke-opacity="0.35"/>
-  <text x="64" y="${HEIGHT - 96}" font-family="system-ui, sans-serif" font-size="34" fill="hsl(${hue} 25% 92%)">${title}</text>
+  ${title.map((line, index) => `<text x="64" y="${HEIGHT - 96 - (title.length - 1 - index) * 40}" font-family="system-ui, sans-serif" font-size="34" fill="hsl(${hue} 25% 92%)">${line}</text>`).join("\n  ")}
   <text x="64" y="${HEIGHT - 52}" font-family="system-ui, sans-serif" font-size="22" fill="hsl(${hue} 20% 78%)">${mode} · ${request.durationS}s · ${escapeXml(request.modelId)}</text>
   <text x="${WIDTH - 64}" y="88" text-anchor="end" font-family="system-ui, sans-serif" font-size="24" letter-spacing="6" fill="hsl(${hue} 90% 70%)">DEMO</text>
 </svg>`;
@@ -87,6 +112,12 @@ const MAX_AUDIO_SECONDS = 30;
  * in the browser. It is a tone shaped like speech, not a voice, and the page labels it as a demo.
  */
 export function demoAudio(request: GenerateRequest): JobResult {
+  // A configured local voice wins over the tone; a broken or silent command keeps the tone.
+  const spoken = speak(request.prompt);
+  if (spoken !== undefined) {
+    return { url: spoken, kind: "audio", width: 0, height: 0, demoVoice: "command" };
+  }
+
   const seed = hash(`${request.mode}|${request.prompt}|${request.modelId}`);
   const seconds = Math.min(request.durationS, MAX_AUDIO_SECONDS);
   const total = Math.max(1, Math.floor(AUDIO_RATE * seconds));
@@ -126,6 +157,7 @@ export function demoAudio(request: GenerateRequest): JobResult {
     kind: "audio",
     width: 0,
     height: 0,
+    demoVoice: "tone",
   };
 }
 

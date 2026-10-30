@@ -1,0 +1,352 @@
+{
+  "weights": [
+    {
+      "file": "ae.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/741f7c3ce8b383c54771c7003378a50191e9efe9/ae.safetensors",
+      "source": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "bytes": 335304388,
+      "sha256": null,
+      "gated": true
+    },
+    {
+      "file": "clip_l.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/6af2a98e3f615bdfa612fbd85da93d1ed5f69ef5/clip_l.safetensors",
+      "source": "https://huggingface.co/comfyanonymous/flux_text_encoders",
+      "bytes": 246144152,
+      "sha256": "660c6f5b1abae9dc498ac2d21e1347d2abdb0cf6c0c0c8576cd796491d9a6cdd"
+    },
+    {
+      "file": "t5xxl_fp16.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/6af2a98e3f615bdfa612fbd85da93d1ed5f69ef5/t5xxl_fp16.safetensors",
+      "source": "https://huggingface.co/comfyanonymous/flux_text_encoders",
+      "bytes": 9787841024,
+      "sha256": "6e480b09fae049a72d2a8c5fbccb8d3e92febeb233bbe9dfe7256958a9167635"
+    },
+    {
+      "file": "flux1-dev-kontext_fp8_scaled.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Flux-1-Kontext-Dev/resolve/795e390e4a1200720e40af3780d5d8b96bc13ae3/split_files/diffusion_models/flux1-dev-kontext_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Flux-1-Kontext-Dev",
+      "bytes": 11904640136,
+      "sha256": "630ba795ec64283b4230ea23cf79406c2c68b7c578229ed139f30043eadb30a2"
+    },
+    {
+      "file": "flux2_dev_fp8mixed.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Flux-2-Dev/resolve/9630c1b4b6e690497ae0c19bb6b1b35d4ebedcb7/split_files/diffusion_models/flux2_dev_fp8mixed.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Flux-2-Dev",
+      "bytes": 35455599592,
+      "sha256": "863a82e4ff950a42a6b0e80bea824828f129eb1a8fbbdbd9e8cb29859127b486"
+    },
+    {
+      "file": "mistral_3_small_flux2_fp8.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/Flux-2-Dev/resolve/9630c1b4b6e690497ae0c19bb6b1b35d4ebedcb7/split_files/text_encoders/mistral_3_small_flux2_fp8.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Flux-2-Dev",
+      "bytes": 18034640095,
+      "sha256": "e3467b7d912a234fb929cdf215dc08efdb011810b44bc21081c4234cc75b370e"
+    },
+    {
+      "file": "flux2-vae.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Comfy-Org/Flux-2-Dev/resolve/9630c1b4b6e690497ae0c19bb6b1b35d4ebedcb7/split_files/vae/flux2-vae.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Flux-2-Dev",
+      "bytes": 336213556,
+      "sha256": "d64f3a68e1cc4f9f4e29b6e0da38a0204fe9a49f2d4053f0ec1fa1ca02f9c4b5"
+    },
+    {
+      "file": "flux-2-klein-4b.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Flux-2-Klein-4B/resolve/5b3abca5c0dc1ecd4eaf3340868d09063fc1c965/split_files/diffusion_models/flux-2-klein-4b.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Flux-2-Klein-4B",
+      "bytes": 7751105712,
+      "sha256": "ec3d4e733a771f61c052fb4856c48b336c55eaf2c65487c2a1faeb9bbda7a343"
+    },
+    {
+      "file": "qwen_3_4b.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo/resolve/6fc90a3b1b653e935a0d175e260736de25b84df5/split_files/text_encoders/qwen_3_4b.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "bytes": 8044982048,
+      "sha256": "6c671498573ac2f7a5501502ccce8d2b08ea6ca2f661c458e708f36b36edfc5a"
+    },
+    {
+      "file": "qwen_image_fp8_e4m3fn.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image/resolve/1f12b17be14c89b026c51a91d67c32f84bb047bc/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image",
+      "bytes": 20430635136,
+      "sha256": "98763a127701eb6fb59096f7742cb3aa7d64ed510b9f4e882d8351f8176e3ce3"
+    },
+    {
+      "file": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image/resolve/1f12b17be14c89b026c51a91d67c32f84bb047bc/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image",
+      "bytes": 9384670680,
+      "sha256": "cb5636d852a0ea6a9075ab1bef496c0db7aef13c02350571e388aea959c5c0b4"
+    },
+    {
+      "file": "qwen_image_vae.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image/resolve/1f12b17be14c89b026c51a91d67c32f84bb047bc/split_files/vae/qwen_image_vae.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image",
+      "bytes": 253806246,
+      "sha256": "a70580f0213e67967ee9c95f05bb400e8fb08307e017a924bf3441223e023d1f"
+    },
+    {
+      "file": "qwen_image_edit_2509_fp8_e4m3fn.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-Edit/resolve/f68ace85e60b4a02a323e394253731947657b7d2/split_files/diffusion_models/qwen_image_edit_2509_fp8_e4m3fn.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image-Edit",
+      "bytes": 20430698424,
+      "sha256": "318568f61951ab9da21100c7b896e3c1da67f0d2efad6421545e022cfaa2b2b4"
+    },
+    {
+      "file": "wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.2/resolve/ee6f4a40737a995bf5818954cfce6d59443b0f04/split_files/diffusion_models/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "bytes": 14293923632,
+      "sha256": "cad711ae211c8b23455ec68cd6a190a33a3d874234a77eb57266d73f8f0e6c9f"
+    },
+    {
+      "file": "wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.2/resolve/ee6f4a40737a995bf5818954cfce6d59443b0f04/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "bytes": 14293923632,
+      "sha256": "e71b96d7c82e638694c5e7fb98fac4bfb0e4ddc5fbbb4b1df40da8f0f1278a97"
+    },
+    {
+      "file": "wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.2/resolve/ee6f4a40737a995bf5818954cfce6d59443b0f04/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "bytes": 14294742832,
+      "sha256": "6122e79d55e0f235698d11d657f3b196c5273c830da00b2b013c5a048d5e6a42"
+    },
+    {
+      "file": "wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.2/resolve/ee6f4a40737a995bf5818954cfce6d59443b0f04/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "bytes": 14294742832,
+      "sha256": "5471a457b6ac404202a5fbe6c11595a3d5641fc766b00f38763f72303fffc21e"
+    },
+    {
+      "file": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.1/resolve/123acf1cc74bccbb9bfff8ac1ee72edc08c2341d/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.1",
+      "bytes": 6735906897,
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68"
+    },
+    {
+      "file": "wan_2.1_vae.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.1/resolve/123acf1cc74bccbb9bfff8ac1ee72edc08c2341d/split_files/vae/wan_2.1_vae.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.1",
+      "bytes": 253815318,
+      "sha256": "2fc39d31359a4b0a64f55876d8ff7fa8d780956ae2cb13463b0223e15148976b"
+    },
+    {
+      "file": "clip_vision_h.safetensors",
+      "folder": "clip_vision",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.1/resolve/123acf1cc74bccbb9bfff8ac1ee72edc08c2341d/split_files/clip_vision/clip_vision_h.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.1",
+      "bytes": 1264219396,
+      "sha256": "64a7ef761bfccbadbaa3da77366aac4185a6c58fa5de5f589b42a65bcc21f161"
+    },
+    {
+      "file": "wan2.1_vace_14B_fp16.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.1/resolve/123acf1cc74bccbb9bfff8ac1ee72edc08c2341d/split_files/diffusion_models/wan2.1_vace_14B_fp16.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Wan-2.1",
+      "bytes": 34675323640,
+      "sha256": "f202a5c59b8a91ada1862c46a038214f1f7f216c61ec8350d25f69b919da4307"
+    },
+    {
+      "file": "ltx-2-19b-dev-fp8_transformer_only.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Kijai/LTXV2_comfy/resolve/adf96f9c128c0aa59189f4dc78a622aa4b353621/diffusion_models/ltx-2-19b-dev-fp8_transformer_only.safetensors",
+      "source": "https://huggingface.co/Kijai/LTXV2_comfy",
+      "bytes": 21553136472,
+      "sha256": "6d6f26c0643ef1f7ffc28a6d703198f0a8521a45c3e7d75fe707335e6bae6b76",
+      "community": true
+    },
+    {
+      "file": "LTX2_video_vae_bf16.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Kijai/LTXV2_comfy/resolve/adf96f9c128c0aa59189f4dc78a622aa4b353621/VAE/LTX2_video_vae_bf16.safetensors",
+      "source": "https://huggingface.co/Kijai/LTXV2_comfy",
+      "bytes": 2445008522,
+      "sha256": "8ea083ef4e7118c7fb5c78834fc6b76106bd31464b0c7912bb9dbc7557b0b91d",
+      "community": true
+    },
+    {
+      "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/ccde4ba417d7900669fd56dd292a883cee11ff37/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/ltx-2",
+      "bytes": 9447702218,
+      "sha256": "aaca463d11e6d8d2a4bdb0d6299214c15ef78a3f73e0ef8113d5a9d0219b3f6d"
+    },
+    {
+      "file": "ltx-2-19b-embeddings_connector_dev_bf16.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Kijai/LTXV2_comfy/resolve/adf96f9c128c0aa59189f4dc78a622aa4b353621/text_encoders/ltx-2-19b-embeddings_connector_dev_bf16.safetensors",
+      "source": "https://huggingface.co/Kijai/LTXV2_comfy",
+      "bytes": 2862983400,
+      "sha256": "55781d7d90b63032a035b8e2efcd249629e8215305b1fc6f5ccfbf95f700fcc6",
+      "community": true
+    },
+    {
+      "file": "ltx-2.5-22b-dev-transformer-bf16.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/49b093a39c19169a8a81721dcc541e07e945232f/diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors",
+      "source": "https://huggingface.co/Lightricks/LTX-2.5",
+      "bytes": 42018190584,
+      "sha256": null,
+      "gated": true
+    },
+    {
+      "file": "ltx-2.5-video-vae-bf16.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/49b093a39c19169a8a81721dcc541e07e945232f/vae/ltx-2.5-video-vae-bf16.safetensors",
+      "source": "https://huggingface.co/Lightricks/LTX-2.5",
+      "bytes": 1472223346,
+      "sha256": null,
+      "gated": true
+    },
+    {
+      "file": "gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/49b093a39c19169a8a81721dcc541e07e945232f/text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+      "source": "https://huggingface.co/Lightricks/LTX-2.5",
+      "bytes": 26263858182,
+      "sha256": null,
+      "gated": true
+    },
+    {
+      "file": "hunyuanvideo1.5_720p_t2v_fp16.safetensors",
+      "folder": "diffusion_models",
+      "url": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5/resolve/1405a2b738c29b890cf6d03fc038d8d3e92eeed7/split_files/diffusion_models/hunyuanvideo1.5_720p_t2v_fp16.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5",
+      "bytes": 16653368128,
+      "sha256": "4f05e2a31b51b7ddee3ef336d234e0932001cbdc85887da15451069fda3e1d05"
+    },
+    {
+      "file": "hunyuanvideo15_vae_fp16.safetensors",
+      "folder": "vae",
+      "url": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5/resolve/1405a2b738c29b890cf6d03fc038d8d3e92eeed7/split_files/vae/hunyuanvideo15_vae_fp16.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5",
+      "bytes": 2521292758,
+      "sha256": "e7c3091949c27e2d55ae6d5df917b99dadfebbf308e5a50d0ade0d16c90297ae"
+    },
+    {
+      "file": "byt5_small_glyphxl_fp16.safetensors",
+      "folder": "text_encoders",
+      "url": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5/resolve/1405a2b738c29b890cf6d03fc038d8d3e92eeed7/split_files/text_encoders/byt5_small_glyphxl_fp16.safetensors",
+      "source": "https://huggingface.co/Comfy-Org/Hunyuan-Video-1.5",
+      "bytes": 438643184,
+      "sha256": "516910bb4c9b225370290e40585d1b0e6c8cd3583690f7eec2f7fb593990fb48"
+    },
+    {
+      "file": "RealESRGAN_x2plus.pth",
+      "folder": "upscale_models",
+      "url": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth",
+      "source": "https://github.com/xinntao/Real-ESRGAN/releases/tag/v0.2.1",
+      "bytes": 67061725,
+      "sha256": null,
+      "note": "GitHub published no digest for this asset; hash it once after the first download"
+    },
+    {
+      "file": "RealESRGAN_x4plus.pth",
+      "folder": "upscale_models",
+      "url": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth",
+      "source": "https://github.com/xinntao/Real-ESRGAN/releases/tag/v0.1.0",
+      "bytes": 67040989,
+      "sha256": null,
+      "note": "GitHub published no digest for this asset; hash it once after the first download"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ComfyUI-Frame-Interpolation",
+      "repo": "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git",
+      "commit": "26545cc2dd95bc3d27f056016300673bdeee78f5",
+      "provides": [
+        "RIFE VFI"
+      ]
+    },
+    {
+      "id": "comfyui_controlnet_aux",
+      "repo": "https://github.com/Fannovel16/comfyui_controlnet_aux.git",
+      "commit": "a587a4c1594524c1d2de5cd1a86cd868ff448e1c",
+      "provides": [
+        "DepthAnythingV2Preprocessor"
+      ]
+    },
+    {
+      "id": "ComfyUI-Chatterbox",
+      "repo": "https://github.com/wildminder/ComfyUI-Chatterbox.git",
+      "commit": "b619de9e605b8477ba76bfd069f64be2ce2b7b5c",
+      "provides": [
+        "ChatterboxTTS",
+        "ChatterboxVC"
+      ]
+    }
+  ],
+  "autoDownloaded": [
+    {
+      "file": "rife47.pth",
+      "nodePack": "ComfyUI-Frame-Interpolation",
+      "why": "the RIFE VFI node downloads rife47.pth into its own ckpts folder from the release mirrors listed in vfi_utils.py",
+      "evidence": "vfi_utils.py @ 26545cc2dd95bc3d27f056016300673bdeee78f5 contains download_url_to_file"
+    },
+    {
+      "file": "depth_anything_v2_vitl.pth",
+      "nodePack": "comfyui_controlnet_aux",
+      "why": "DepthAnythingV2Preprocessor fetches the checkpoint from Hugging Face through custom_hf_download on first use",
+      "evidence": "src/custom_controlnet_aux/depth_anything_v2/__init__.py @ a587a4c1594524c1d2de5cd1a86cd868ff448e1c contains custom_hf_download"
+    }
+  ],
+  "misses": [
+    {
+      "kind": "nodeClass",
+      "class": "Deflicker",
+      "tried": [
+        "karcsiha/comfyUi-deflicker: __init__.py does not register \"Deflicker\":"
+      ],
+      "reason": "the pack's source does not register this class"
+    },
+    {
+      "kind": "nodeClass",
+      "class": "AudioGen",
+      "tried": [],
+      "reason": "no ComfyUI node pack found that registers this class"
+    },
+    {
+      "kind": "nodeClass",
+      "class": "AudioMatch",
+      "tried": [],
+      "reason": "no ComfyUI node pack found that registers this class"
+    },
+    {
+      "kind": "nodeClass",
+      "class": "WhisperTranscribe",
+      "tried": [],
+      "reason": "no ComfyUI node pack found that registers this class"
+    },
+    {
+      "kind": "nodeClass",
+      "class": "TranslateText",
+      "tried": [],
+      "reason": "no ComfyUI node pack found that registers this class"
+    }
+  ]
+}

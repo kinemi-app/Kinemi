@@ -1,0 +1,54 @@
+---
+// Everything Kinemi keeps in the browser, from src/data/storage.ts (the list Settings shows too).
+import Legal from '../../layouts/Legal.astro';
+import { STORAGE } from '../../data/storage';
+import { CLOUD } from '../../app/deploy';
+---
+
+<Legal title="Cookies and storage" slug="cookies" kicker="Your browser" description="What Kinemi stores in your browser, and why there is no cookie banner.">
+  <p>
+    <strong>Kinemi sets no tracking cookies, no advertising cookies and no third-party cookies.</strong> It keeps only what the studio needs to work, in your browser's own storage (localStorage, sessionStorage and IndexedDB):
+    your studio, your settings, the keys you saved and, with an account, your sign-in session.
+  </p>
+  <p>
+    Storing these is strictly necessary to provide the service you ask for, so under § 25 (2) no. 2 TDDDG it needs no consent, and there is no cookie banner. Nothing on this list is read by us unless you have an account,
+    in which case your studio is synced to it, as the <a href="/legal/privacy/">Privacy Policy</a> describes.
+  </p>
+
+  <h2 id="list">What is stored</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">What it holds</th>
+          <th scope="col">How long</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          STORAGE.map((s) => (
+            <tr>
+              <td>
+                <code>{s.key}</code>
+                <br />
+                <small>{s.where}</small>
+              </td>
+              <td>
+                {s.what} {s.why}
+                {s.accounts && !CLOUD ? ' Only on versions of Kinemi with accounts.' : s.accounts ? ' Only when you have an account.' : ''}
+              </td>
+              <td>{s.keeps}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="delete">Deleting it</h2>
+  <p>
+    In the studio, Settings → Data & privacy → Reset this studio removes your studio, your settings and your saved keys. Clearing this site's data in your browser removes everything on the list. With an account, Settings →
+    Account → Delete your account also removes what is saved to your account.
+  </p>
+</Legal>
