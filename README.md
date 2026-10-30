@@ -12,7 +12,7 @@ license.
 
 [![Kinemi trailer: a hand sweeps across his face and reveals a blue-white hologram](media/kinemi-trailer.jpg)](media/kinemi-trailer.mp4)
 
-Every shot was rendered on Comfy Cloud with Seedance 2.5 and FLUX.2. Click the picture to play the
+Every shot was rendered on Comfy Cloud with Seedance 2.5 and FLUX.2, and the voices with ElevenLabs. Click the picture to play the
 trailer ([mp4](media/kinemi-trailer.mp4)).
 
 ## What you can do
